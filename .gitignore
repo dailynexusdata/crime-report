@@ -1,4 +1,4 @@
-data/*
+rawdata/*
 verif.csv
 package-lock.json
 node_modules
