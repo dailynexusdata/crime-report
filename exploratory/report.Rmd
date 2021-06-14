@@ -1,0 +1,424 @@
+---
+title: "Untitled"
+author: "Alex Rudolph"
+date: "5/31/2021"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+    # https://docs.google.com/document/d/1y6JvF-0AAkscrIJwNMzqgJoyqIkpuii2MspwsltlxnI/edit#
+iv.charges <- data.frame(
+  code=c(
+    "BP25662"
+    ,"CO36-3"
+    ,"CO40-2"
+    ,"CO24-34"
+    ,"PC647(F)"
+    ,"CO6-70.01"
+    ,"BP25661"
+    ,"PC148(A)"
+    ,"HS11364"
+    ,"BP25658"
+    ,"IV1993-2"
+    ,"VC12500(A)"
+    ,"PC594(B)(2)(A)"
+    ,"PC415(2)"
+    ,"PC242"
+    ,"CO36-6"
+    ,"PC273.5(A)"
+    ,"PC415(1)"
+    ,"HS11350"
+  ),
+  desc=c(
+    "Minor in possession",
+    "Open Container - County",
+    "Loud noise/music",
+    "Urinating in Public ",
+    "Drunk in Public",
+    "Festival Ordinance",
+    "Fake ID by a Minor",
+    "Resisting / obstructing arrest",
+    "Possession of opium pipe",
+    "Providing alcohol to minors",
+    "Possession of alcohol in IVRPD park",
+    "Driving without a license",
+    "Defacement of property",
+    "Disturbing someone else in public ",
+    "Battery",
+    "Isla Vista Specific Public Nuisance",
+    "Domestic Abuse",
+    "Fighting in Public",
+    "Possession of illegal substance"
+  )
+)
+
+# https://www.sbsheriff.org/wp-content/uploads/2019/11/Common-Codes.pdf
+county.charges <- data.frame(
+  code=c(
+    "PC148",
+    "PC166.4",
+    "PC187",
+    "PC207",
+    "PC211",
+    "PC215",
+    "PC240",
+    "PC243B",
+    "PC243(e)",
+    "PC245",
+    "PC261",
+    "PC273.5",
+    "PC273A",
+    "PC2888",
+    "PC308(b)",
+    "PC314.1",
+    "PC374b",
+    "PC415",
+    "PC417",
+    "PC459",
+    "PC484",
+    "PC487",
+    "PC488",
+    "PC537",
+    "PC594",
+    "PC597",
+    "PC602",
+    "PC653m",
+    "PC664",
+    "PC836",
+    "PC853.8",
+    "VC10851",
+    "VC12951a",
+    "VC14601",
+    "VC20001",
+    "VC20002",
+    "VC22348a",
+    "VC23103",
+    "VC23512a", # i split the comma up to an a and b, idk
+    "VC23512b",
+    "VC4000A",
+    "VC40508a",
+    "HS11357a,b",
+    "HS11377",
+    "HS11550",
+    "WI300",
+    "WI601",
+    "WI602",
+    "WI5150",
+    "CO24-5.1",
+    "CO24-15",
+    "CO24-29",
+    "CO36-2"
+  ),
+  desc=c(
+    # PC -----------------------------------------------
+    "Resisting Arrest",
+    "Violation of Court Order",
+    "Homicide",
+    "Kidnapping",
+    "Robbery",
+    "Carjacking",
+    "Assault",
+    "Battery on a Peace Officer", # a *Police* Officer?
+    "Spousal Battery (Misd.)",
+    "Assault w/Deadly Weapon",
+    "Rape",
+    "Spousal Abuse (Felony)",
+    "Child Abuse",
+    "Child Molest",
+    "Juvenile in possession-Tobacco",
+    "Indecent Exposure",
+    "Illegal Dumping",
+    "Disturbing the Peace",
+    "Brandishing a Weapon",
+    "Burglary",
+    "Theft, defined",
+    "Grand Theft",
+    "Petty Theft",
+    "Defrauding an Innkeeper",
+    "Malicious Mischief, Vandalism",
+    "Cruelty to animals",
+    "Trespassing",
+    "Misuse of telephone",
+    "Attempt (any crime)",
+    "Probable cause to arrest",
+    "Failure to appear on misd. cite",
+    # VC -------------------------------------------
+    "Driving w/o owner's consent",
+    "License not in possession",
+    "Licesense suspended or revoked",
+    "Hit and run, unjury",
+    "Hit and run, non-injury",
+    "Speeding",
+    "Reckless Driving",
+    "DUI Alcohol",
+    "DUI Drugs",
+    "Non-current registration",
+    "Failure to appear",
+    # HS -------------------------------------------
+    "Possession of marijuana",
+    "Possession of controlled substance",
+    "Under influence of drugs",
+    # WI --------------------------------------------
+    "Dependent juvenile",
+    "Juvenile out of control",
+    "Juvenile crime",
+    "Mental case",
+    # CO --------------------------------------------
+    "Illegal Camping",
+    "Public Nudity",
+    "Driving on unimproved property",
+    "Consuming alcohol in public"
+  )
+  # 
+  # Fighting = Fighting/Assault etc...
+)
+
+charges <- rbind(iv.charges, county.charges)
+charges <- cbind(charges,   group=c(
+    "Alcohol",
+    "Alcohol",
+    "Partying",
+    "Disorderly Conduct",
+    "Alcohol",
+    "Partying", # Festival Ordinance ?
+    "Fake ID",
+    "Resisting arrest",
+    "Drugs",
+    "Alcohol",
+    "Alcohol",
+    "Driving w/o License",
+    "Property Damage",
+    "Disorderly Conduct",
+    "Fighting",
+    "Disorderly Conduct",
+    "Abuse",
+    "Fighting",
+    "Drugs",
+    "Resisting arrest",
+    "Violation of Court Order",
+    "Homicide",
+    "Kidnapping",
+    "Robbery/Burglary/Theft",
+    "Propery Damage",
+    "Fighting",
+    "Fighting",
+    "Abuse",
+    "Assult w/ Deadly Weapon",
+    "Rape",
+    "Abuse",
+    "Abuse",
+    "Abuse",
+    "Drugs", # Juveile with tobacco
+    "Disorderly Conduct",
+    "Illegal Dumping",
+    "Disorderly Conduct",
+    "Brandishing a weapon",
+    "Robbery/Burglary/Theft",
+    "Robbery/Burglary/Theft",
+    "Robbery/Burglary/Theft",
+    "Robbery/Burglary/Theft",
+    "Defrauding an Innkeeper",
+    "Property Damage",
+    "Cruelty to animals",
+    "Trespassing",
+    "Misuse of telephone",
+    "Attempt (any crime)",
+    "Probable cause to arrest",
+    "Failure to appear",
+    "Driving w/o owner's consent",
+    "License not in possesssion",
+    "License revoked",
+    "Hit and run",
+    "Hit and run",
+    "Speeding",
+    "Reckless Driving",
+    "DUI",
+    "DUI",
+    "Non-current registration",
+    "Failure to appear",
+    "Possession of marijuana",
+    "Drugs",
+    "Drugs",
+    "Dependent juvenile",
+    "Juvenile",
+    "Juvenile",
+    "Mental Case",
+    "Illegal camping",
+    "Public Nudity",
+    "Driving on unimproved property",
+    "Alcohol"
+  ))
+
+View(arrange(charges, group))
+```
+
+```{r}
+charges %>%
+  filter(code == "PC647(F)")
+```
+
+
+```{r}
+# https://docs.google.com/document/d/1y6JvF-0AAkscrIJwNMzqgJoyqIkpuii2MspwsltlxnI/edit#
+types <- data.frame(
+  code = c("ARR", "CIT", "DFC"),
+  desc =c("Arrest", "Citation", "Did not file charges")
+)
+```
+
+```{r}
+# I put Filipino under Pacific Islander, idk
+# Make a category for Unknown, Other, NA
+race.groups <- data.frame(
+  orig=c("Vietnamese", "Other Asian", "Korean", "Japanese", "Chinese", "Asian Indian",
+         "Samoan", "Pacific Islander", "Hawaiian", "Filipino", "Hawaiian  (NCIC value=Unknown race)",
+         "White", "Other", "Unknown", "Hispanic/Mexican/Latin", 
+         "Black", "American Indian/Alaska"),
+  race.group=c(rep("Asian",6), rep("Pacific Islander", 5),
+         "White", "Other", "Unknown", "Hispanic/Mexican/Latin", 
+         "Black", "American Indian/Alaska")
+)
+```
+
+```{r}
+arrests <- read.csv("../data/arrestInfo.csv") %>%
+  mutate(dob = as.Date(DOB, "%m/%d/%Y"), date = as.Date(Arrrest.Date, "%m/%d/%Y")) %>%
+  left_join(race.groups, by=c("Race"="orig")) %>%
+  left_join(charges, by=c("Charge"="code"))
+
+arrests.names <- read.csv("../data/adults_with_names.csv") %>%
+  mutate(dob = as.Date(dob, "%m/%d/%Y"), date = as.Date(date, "%m/%d/%Y")) %>%
+  left_join(race.groups, by=c("Race"="orig")) %>%
+  left_join(charges, by=c("Charge"="code"))
+```
+
+```{r}
+dim(arrests)
+dim(arrests.names)
+```
+```{r}
+arrests %>%
+  select(race.group) %>%
+  drop_na() %>%
+  mutate(tot = n()) %>%
+  group_by(race.group) %>%
+  summarise(pct = n() / tot[1] * 100)
+```
+
+```{r}
+arrests.names %>%
+  select(first, last, dob, race.group) %>%
+  #drop_na() %>%
+  group_by(first, last, dob) %>%
+  summarise(race.group = first(na.omit(race.group)), n=n()) %>%
+  ungroup() %>%
+  filter(last == "MARSAW") # MARSAW, BRIGGS
+
+# different dob, no race specified (p sure he's black but yeah)
+```
+
+
+```{r}
+arrests.names %>%
+  select(first, last, race.group) %>%
+  drop_na() %>%
+  group_by(first, last) %>%
+  summarise(race.group = first(na.omit(race.group)), n=n()) %>%
+  ungroup() %>%
+  #filter(n > 1) %>%
+  mutate(tot = n()) %>%
+  group_by(race.group) %>%
+  summarise(pct = n() / tot[1] * 100, avg=mean(n), M=max(n))
+```
+
+
+```{r}
+arrests %>%
+  group_by(race.group, Involvement) %>%
+  summarise(tot = n()) %>%
+  group_by(Involvement) %>%
+  summarise(Asian = tot[1], Black = tot[2], `Hispanic/Mexican/Latin`= tot[3], Other=tot[4], `Pacific Islander`=tot[5], Unknown=tot[6], White=tot[7]) %>%
+  select(-c(Involvement))%>%
+  chisq.test()
+
+arrests %>%
+  group_by(race.group, Involvement) %>%
+  summarise(tot = n()) %>%
+  mutate(
+    pct = tot / sum(tot),
+    tocol = ifelse(race.group == "Black" & Involvement == "ARR", "ARR1", Involvement)
+  ) %>%
+  drop_na() %>%
+  ggplot() +
+    geom_bar(aes(x=race.group, y=pct, fill=tocol), stat="identity", position="stack") +
+    theme(
+      axis.text.x = element_text(angle=45)
+    ) +
+    scale_fill_manual("legend", values=c("ARR"="lightblue", "CIT"="gray", DFC="lightgray", "ARR1"="red"))
+```
+
+```{r}
+arrests %>%
+  group_by(race.group, Involvement) %>%
+  summarise(tot = n()) %>%
+  mutate(
+    pct = tot / sum(tot),
+    tocol = ifelse(race.group == "Black" & Involvement == "ARR", "ARR1", Involvement)
+  ) %>%
+  drop_na() %>%
+  ggplot() +
+    geom_bar(aes(x=race.group, y=pct, fill=tocol), stat="identity", position="stack") +
+    theme(
+      axis.text.x = element_text(angle=45)
+    ) +
+    scale_fill_manual("legend", values=c("ARR"="lightblue", "CIT"="gray", DFC="lightgray", "ARR1"="red"))
+```
+
+
+```{r}
+arrests %>%
+  group_by(group) %>%
+  summarise(n = n()) %>%
+  mutate(
+    viol = ifelse(group %in% c("Resisting arrest", "Fighting", "Robbery/Burglary/Theft"), "viol", "no")
+  ) %>%
+  arrange(desc(n)) %>% 
+  drop_na() %>%
+  head(10)%>%
+  #group_by(viol) %>%
+  #summarise(tot = sum(n))
+  ggplot() +
+    geom_bar(aes(x=reorder(group, n), y=n, fill=viol), stat="identity") +
+    scale_fill_manual("legend", values=c("viol"="blue", "no"="gray"))+
+    coord_flip()
+```
+
+```{r}
+arrests %>%
+  filter(format(date, "%Y") == 2019) %>%
+  group_by(race.group) %>%
+  count() %>%
+  ungroup() %>%
+  drop_na() %>%
+  ggplot(aes(x = reorder(race.group, n), y = n)) +
+    geom_bar(stat="identity") +
+    coord_flip()
+```
+
+```{r}
+arrests %>%
+  filter(group == "Fighting") %>%
+  group_by(desc) %>%
+  count()
+```
+```{r}
+arrests %>%
+  select(race.group) %>%
+  group_by(race.group) %>%
+  count() %>%
+  ungroup() %>%
+  mutate(pct = n / sum(n) * 100)
+  drop_na() %>%
+```
+
