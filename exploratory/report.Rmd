@@ -367,6 +367,11 @@ arrests %>%
     tocol = ifelse(race.group == "Black" & Involvement == "ARR", "ARR1", Involvement)
   ) %>%
   drop_na() %>%
+  select(race=race.group, inv=Involvement, val=tot) %>%
+  write.csv("involvement_by_race.csv")
+
+
+%>%
   ggplot() +
     geom_bar(aes(x=race.group, y=pct, fill=tocol), stat="identity", position="stack") +
     theme(
@@ -377,20 +382,34 @@ arrests %>%
 
 
 ```{r}
-arrests %>%
-  group_by(group) %>%
+arrType <- arrests %>%
+  group_by(group, desc) %>%
   summarise(n = n()) %>%
   mutate(
-    viol = ifelse(group %in% c("Resisting arrest", "Fighting", "Robbery/Burglary/Theft"), "viol", "no")
+    viol = ifelse(group %in% c("Resisting arrest", "Fighting", "Robbery/Burglary/Theft"), 1, 0)
   ) %>%
-  arrange(desc(n)) %>% 
-  drop_na() %>%
+  arrange(group, desc(n)) %>% 
+  drop_na()
+
+left_join(
+  arrType,
+  arrType %>%
+    group_by(group) %>%
+    summarise(tot = sum(n)),
+  on=c("group"="group")
+) %>%
+  filter(tot >= 10) %>%
+  select(-tot) %>%
+  arrange(group, desc(n)) %>%
+  write.csv("../dist/data/arrType.csv")
+
+ %>%
   head(10)%>%
-  #group_by(viol) %>%
+  group_by(viol) %>%
   #summarise(tot = sum(n))
   ggplot() +
     geom_bar(aes(x=reorder(group, n), y=n, fill=viol), stat="identity") +
-    scale_fill_manual("legend", values=c("viol"="blue", "no"="gray"))+
+  #  scale_fill_manual("legend", values=c("viol"="blue", "no"="gray"))+
     coord_flip()
 ```
 

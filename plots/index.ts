@@ -9,6 +9,13 @@ interface irDataType {
   tot: number;
   amt: number;
 }
+interface arrTypeDataType {
+  [group: string]: Array<{
+    desc: string;
+    n: number;
+    viol: 0 | 1;
+  }>;
+}
 interface marginType {
   left: number;
   right: number;
@@ -44,6 +51,20 @@ const groupIRData = (data: Array<irDataType>) => {
     });
 
   return outputReversed;
+};
+
+const groupArrTypeData = (data: arrTypeDataType) => {
+  const output = {};
+
+  data.forEach((dat) => {
+    if (Object.keys(output).includes(dat.group)) {
+      output[dat.group].push({ desc: dat.desc, n: dat.n, viol: dat.viol });
+    } else {
+      output[dat.group] = [{ desc: dat.desc, n: dat.n, viol: dat.viol }];
+    }
+  });
+
+  return output;
 };
 
 let irData = null;
@@ -94,5 +115,11 @@ let arrData = null;
     irData = groupIRData(data as any);
     delete irData["Other"];
     resizeIR();
+  });
+  d3.csv(
+    "https://raw.githubusercontent.com/dailynexusdata/crime-report/main/dist/data/arrType.csv"
+  ).then((data) => {
+    arrData = groupArrTypeData(data as any);
+    resizeArrType();
   });
 })();

@@ -1,25 +1,25 @@
-"","group","desc","n","viol"
-"1","Abuse","Domestic Abuse",30,0
-"2","Alcohol","Open Container - County",1440,0
-"3","Alcohol","Minor in possession",778,0
-"4","Alcohol","Drunk in Public",312,0
-"5","Alcohol","Possession of alcohol in IVRPD park",48,0
-"6","Alcohol","Consuming alcohol in public",19,0
-"7","Alcohol","Providing alcohol to minors",13,0
-"8","Disorderly Conduct","Urinating in Public ",231,0
-"9","Disorderly Conduct","Isla Vista Specific Public Nuisance",31,0
-"10","Disorderly Conduct","Disturbing someone else in public ",27,0
-"11","Driving w/o License","Driving without a license",32,0
-"12","Drugs","Possession of opium pipe",41,0
-"13","Drugs","Possession of illegal substance",26,0
-"14","Fake ID","Fake ID by a Minor",70,0
-"15","Fighting","Battery",36,1
-"16","Fighting","Fighting in Public",24,1
-"17","Fighting","Assault",2,1
-"18","Partying","Loud noise/music",1008,0
-"19","Partying","Festival Ordinance",25,0
-"20","Property Damage","Defacement of property",15,0
-"21","Resisting arrest","Resisting / obstructing arrest",121,1
-"22","Robbery/Burglary/Theft","Burglary",22,1
-"23","Robbery/Burglary/Theft","Petty Theft",22,1
-"24","Robbery/Burglary/Theft","Robbery",15,1
+"","group","desc","n","viol","pct"
+"1","Abuse","Domestic Abuse",30,0,0.00680889695869269
+"2","Alcohol","Open Container - County",1440,0,0.326827054017249
+"3","Alcohol","Minor in possession",778,0,0.176577394462097
+"4","Alcohol","Drunk in Public",312,0,0.070812528370404
+"5","Alcohol","Possession of alcohol in IVRPD park",48,0,0.0108942351339083
+"6","Alcohol","Consuming alcohol in public",19,0,0.00431230140717204
+"7","Alcohol","Providing alcohol to minors",13,0,0.0029505220154335
+"8","Disorderly Conduct","Urinating in Public ",231,0,0.0524285065819337
+"9","Disorderly Conduct","Isla Vista Specific Public Nuisance",31,0,0.00703586019064912
+"10","Disorderly Conduct","Disturbing someone else in public ",27,0,0.00612800726282342
+"11","Driving w/o License","Driving without a license",32,0,0.00726282342260554
+"12","Drugs","Possession of opium pipe",41,0,0.00930549251021335
+"13","Drugs","Possession of illegal substance",26,0,0.005901044030867
+"14","Fake ID","Fake ID by a Minor",70,0,0.0158874262369496
+"15","Fighting","Battery",36,1,0.00817067635043123
+"16","Fighting","Fighting in Public",24,1,0.00544711756695415
+"17","Fighting","Assault",2,1,0.000453926463912846
+"18","Partying","Loud noise/music",1008,0,0.228778937812074
+"19","Partying","Festival Ordinance",25,0,0.00567408079891058
+"20","Property Damage","Defacement of property",15,0,0.00340444847934635
+"21","Resisting arrest","Resisting / obstructing arrest",121,1,0.0274625510667272
+"22","Robbery/Burglary/Theft","Burglary",22,1,0.00499319110304131
+"23","Robbery/Burglary/Theft","Petty Theft",22,1,0.00499319110304131
+"24","Robbery/Burglary/Theft","Robbery",15,1,0.00340444847934635
