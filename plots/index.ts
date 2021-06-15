@@ -55,16 +55,42 @@ const groupIRData = (data: Array<irDataType>) => {
 
 const groupArrTypeData = (data: arrTypeDataType) => {
   const output = {};
+  console.log(data);
 
   data.forEach((dat) => {
     if (Object.keys(output).includes(dat.group)) {
-      output[dat.group].push({ desc: dat.desc, n: dat.n, viol: dat.viol });
+      output[dat.group].push({
+        desc: dat.desc,
+        n: dat.n,
+        viol: Number(dat.viol),
+        pct: Number(dat.pct),
+      });
     } else {
-      output[dat.group] = [{ desc: dat.desc, n: dat.n, viol: dat.viol }];
+      output[dat.group] = [
+        {
+          desc: dat.desc,
+          n: dat.n,
+          viol: Number(dat.viol),
+          pct: Number(dat.pct),
+        },
+      ];
     }
   });
 
-  return output;
+  const order = Object.entries(output)
+    .map(([group, arr]) => {
+      return [group, arr.reduce((a, { pct }) => a + pct, 0)];
+    })
+    .sort(([_, a], [__, b]) => a - b)
+    .map(([g, _]) => g);
+
+  const outputOrdered = {};
+
+  order.forEach((group) => {
+    outputOrdered[group] = output[group];
+  });
+
+  return outputOrdered;
 };
 
 let irData = null;
@@ -73,17 +99,21 @@ let arrData = null;
 (() => {
   const resizeArrType = () => {
     const size = {
-      height: 300,
+      height: 300 * (window.innerWidth < 600 ? 1.6 : 1),
       width: Math.max(Math.min(600, window.innerWidth), 300),
     };
 
     const margin: marginType = {
       left: 20 + (window.innerWidth < 600 ? 0 : 160),
       right: 20,
-      top: 40,
-      bottom: 10,
+      top: 60,
+      bottom: 10 + (window.innerWidth < 600 ? 20 : 0),
     };
-    arrestType(arrData, size, margin);
+    d3.select("#arrtype")
+      .style("width", size.width + "px")
+      .selectAll("*")
+      .remove();
+    arrestType(arrData, size, margin, window.innerWidth < 600);
   };
   const resizeIR = () => {
     const size = {

@@ -23,7 +23,7 @@ const interactionByRacePlot = (
   margin: marginType,
   collapsed: boolean
 ) => {
-  const color = ["#9FCBE4", "#d3d3d377", "#d3d3d355"];
+  const color = ["#9FCBE4", "#d3d3d388", "#d3d3d355"];
 
   const container = d3.select("#interaction_by_race");
   container
@@ -88,7 +88,7 @@ const interactionByRacePlot = (
       .style("margin", 0)
       .style("padding", "2px 5px")
       .attr("text-anchor", "middle")
-      .style("background-color", color[i] + (i !== 0 ? "" : "44"))
+      .style("background-color", color[i] + (i !== 0 ? "" : "88"))
       .attr("alignment-baseline", "middle");
   });
   const tooltip = plotArea
@@ -108,7 +108,6 @@ const interactionByRacePlot = (
       tooltip.style("display", "block");
 
       //   tooltip.html(interactions[0].race);
-      tooltip.html("hello");
       const [xpos, ypos] = d3.pointer(event);
 
       if (
@@ -166,7 +165,7 @@ const interactionByRacePlot = (
         .attr("width", x(int.val) - margin.left)
         .attr(
           "fill",
-          color[i] + ((group === "Black" && i === 0) || i !== 0 ? "" : "44")
+          color[i] + ((group === "Black" && i === 0) || i !== 0 ? "" : "88")
         );
 
       if (group === "Black" && i === 0) {

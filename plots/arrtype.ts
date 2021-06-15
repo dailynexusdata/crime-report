@@ -5,6 +5,7 @@ interface dataType {
     desc: string;
     n: number;
     viol: 0 | 1;
+    pct: number;
   }>;
 }
 interface marginType {
@@ -18,12 +19,17 @@ interface sizeType {
   width: number;
 }
 
-const arrestType = (data: dataType, size: sizeType, margin: marginType) => {
+const arrestType = (
+  data: dataType,
+  size: sizeType,
+  margin: marginType,
+  collapsed: boolean
+) => {
   console.log(data);
   const container = d3.select("#arrtype");
   container
     .append("h2")
-    .text("Police Involvement by Race")
+    .text("Types of Crimes")
     .style("margin", "10px 0 0 10px");
 
   const plotArea = container
@@ -53,15 +59,15 @@ const arrestType = (data: dataType, size: sizeType, margin: marginType) => {
 
   const x = d3
     .scaleLinear()
-    .domain([0, 0.5])
+    .domain([0, 0.6])
     .range([margin.left, size.width - margin.right]);
 
+  const overlap = svg.append("g");
   const bars = svg.append("g");
-  //   const overlap = svg.append("g");
 
   svg
     .append("text")
-    .text("% of Interactions")
+    .text("% of Crimes")
     .attr("x", x(0))
     .attr("y", 15)
     // .style("font-size", "16px")
@@ -98,19 +104,22 @@ const arrestType = (data: dataType, size: sizeType, margin: marginType) => {
     .style("border", "1px solid black")
     .style("border-radius", "5px")
     .style("padding", "5px")
-    .style("width", "175px")
+    .style("width", "225px")
     .style("display", "none");
 
+  const labels = svg.append("g");
+  labels.style("display", "block");
+
   plotArea.on("mouseenter", () => {
+    labels.style("display", "none");
     plotArea.on("mousemove", (event) => {
       tooltip.style("display", "block");
 
       //   tooltip.html(interactions[0].race);
-      tooltip.html("hello");
       const [xpos, ypos] = d3.pointer(event);
 
       if (
-        ypos < margin.top + 10 ||
+        ypos < margin.top - 20 ||
         ypos > size.height - 10 ||
         xpos < margin.left ||
         xpos > size.width - margin.right
@@ -119,36 +128,40 @@ const arrestType = (data: dataType, size: sizeType, margin: marginType) => {
         return;
       }
 
-      const idx = Math.min(Math.max(Math.floor(y.invert(ypos)), 0), 5);
-      const [group, tooltipData] = Object.entries(data)[idx] as [
-        string,
-        Array<dataType>
-      ];
+      const idx = Math.min(Math.max(Math.round(y.invert(ypos)), 0), 11);
+      const [group, tooltipData] = Object.entries(data)[idx];
+
+      d3.selectAll("rect[class^='bar']").attr("fill-opacity", 0);
+      d3.selectAll(`.bar-${group.split(/[ /]/)[0]}`).attr("fill-opacity", 1);
+
+      console.log(tooltipData);
 
       tooltip
         .html(
-          `${group}<hr>Arrests: ${tooltipData[0].amt} of ${
-            tooltipData[0].tot
-          }, ${Math.round(tooltipData[0].val * 100)}%<br>Citations: ${
-            tooltipData[1].amt
-          } of ${tooltipData[1].tot}, ${Math.round(
-            tooltipData[1].val * 100
-          )}%<br>DFC: ${tooltipData[2].amt} of ${
-            tooltipData[2].tot
-          }, ${Math.round(tooltipData[2].val * 100)}%`
+          `${group}<hr>${tooltipData
+            .map(({ desc, n }) => `${desc}: ${n}`)
+            .join("<br>")}`
         )
         .style("left", xpos - size.width / 2 + 60 + "px")
         .style("top", ypos + "px");
     });
     plotArea.on("mouseleave", () => {
+      labels.style("display", "block");
       tooltip.style("display", "none");
+      d3.selectAll("rect[class^='bar']").attr("fill-opacity", 0);
     });
   });
 
-  Object.entries(data).forEach(([group, interactions], j) => {
+  const grays = d3.scaleSequential(d3.interpolateGreys).domain([6, -5]);
+
+  let viol = 0;
+  let lastViolIdx = 0;
+  let lastViolx = 0;
+  Object.entries(data).forEach(([group, crimes], j) => {
     let currx = 0;
 
-    interactions.forEach((int: dataType, i: number) => {
+    // console.log(group);
+    crimes.forEach((crime, i) => {
       // console.log({
       //   group,
       //   currx,
@@ -156,54 +169,85 @@ const arrestType = (data: dataType, size: sizeType, margin: marginType) => {
       //   a1: x(currx),
       //   a2: x(int.val),
       // });
+      viol = crime.viol;
+      if (crime.viol === 1) {
+        lastViolIdx = j;
+      }
       bars
         .append("rect")
+        .attr("class", `bar-${group.split(/[ /]/)[0]}`)
         .attr("x", x(currx))
-        .attr("y", y(j) - (collapsed ? 20 : 30))
-        .attr("height", collapsed ? 20 : 30)
-        .attr("width", x(int.val) - margin.left)
-        .attr(
-          "fill",
-          color[i] + ((group === "Black" && i === 0) || i !== 0 ? "" : "44")
-        );
+        .attr("y", y(j) - (collapsed ? 0 : 18))
+        .attr("height", collapsed ? 18 : 18)
+        .attr("width", x(crime.pct) - margin.left)
+        .attr("fill", grays(i))
+        .attr("fill-opacity", 0);
 
-      if (group === "Black" && i === 0) {
-        bars
-          .append("text")
-          .attr("x", x(int.val) + 5)
-          .attr("y", y(j) - (collapsed ? 10 - 2 : 15))
-          .text(`${Math.round(int.val * 100)}%`)
-          .attr("text-anchor", "start")
-          .attr("alignment-baseline", "middle");
-      }
+      //   if (group === "Black" && i === 0) {
+      //     bars
+      //       .append("text")
+      //       .attr("x", x(int.val) + 5)
+      //       .attr("y", y(j) - (collapsed ? 10 - 2 : 15))
+      //       .text(`${Math.round(int.val * 100)}%`)
+      //       .attr("text-anchor", "start")
+      //       .attr("alignment-baseline", "middle");
+      //   }
       if (collapsed) {
         bars
           .append("text")
           .text(group)
           .attr("x", x(0))
-          .attr("y", y(j) - 22)
+          .attr("y", y(j) - 3)
           .attr("text-anchor", "start");
       } else {
         bars
           .append("text")
           .text(group)
           .attr("x", x(0) - 10)
-          .attr("y", y(j) - 15)
+          .attr("y", y(j) - 9)
           .attr("text-anchor", "end")
           .attr("alignment-baseline", "middle");
       }
-      currx += int.val;
+      currx += crime.pct;
     });
 
-    // overlap
-    //   .append("rect")
-    //   .attr("y", y(j) - 30)
-    //   .attr("height", 30)
-    //   .attr("x", x(0))
-    //   .attr("class", "overlap")
-    //   .attr("width", x(1) - margin.right)
-    //   .attr("fill", "#00000000");
+    overlap
+      .append("rect")
+      .attr("x", x(0))
+      .attr("y", y(j) - (collapsed ? 0 : 18))
+      .attr("height", collapsed ? 18 : 18)
+      .attr("width", x(currx) - margin.left)
+      .attr("fill", viol ? "#9FCBE4" : "#d3d3d3");
+
+    if (viol === 1) {
+      lastViolx = currx;
+
+      labels
+        .append("text")
+        .text(`${Math.round(currx * 100)}%`)
+        .attr("x", x(currx) + 5)
+        .attr("y", y(j) - (collapsed ? -2 : 8))
+        .attr("alignment-baseline", collapsed ? "hanging" : "middle")
+        .attr("fill", "#9FCBE4");
+    }
   });
+  console.log(lastViolx, lastViolIdx);
+  bars
+    .append("text")
+    .attr("x", x(lastViolx) + 100)
+    .attr("y", y(lastViolIdx) - (collapsed ? 3 : 6))
+    .text("Violent Crimes make up")
+    .attr("font-size", "20px")
+    .attr("alignment-baseline", "middle")
+    .attr("fill", "#9FCBE4");
+  bars
+    .append("text")
+    .attr("x", x(lastViolx) + 100)
+    .attr("y", y(lastViolIdx) - (collapsed ? 3 : 6) + 20)
+    .text("less than _% of all crimes.")
+    .attr("font-size", "20px")
+    .attr("alignment-baseline", "middle")
+    .attr("fill", "#9FCBE4");
 };
 
 export default arrestType;
