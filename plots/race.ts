@@ -101,14 +101,14 @@ const racePlot = (
         .tickFormat((d) => `${Math.round((d as number) * 100)}`)
     );
 
-  ["Arrests", "Citations", "Did Not File Charges"].forEach((lab, i) => {
+  ["Over Represented", "Under Represented"].forEach((lab, i) => {
     legendarea
       .append("p")
       .text(lab)
       .style("margin", 0)
       .style("padding", "2px 5px")
       .attr("text-anchor", "middle")
-      .style("background-color", "#AFDBF4")
+      .style("background-color", ["#AFDBF4", "#d3d3d399"][i])
       .attr("alignment-baseline", "middle");
   });
   const tooltip = plotArea
@@ -147,7 +147,16 @@ const racePlot = (
       ];
 
       tooltip.html(
-        `${group}<hr>Arrests: ${Math.round(tooltipData.pct * 100)}%`
+        `${group}<hr># of Arrests: ${tooltipData.tot}<br>% of Arrests: ${
+          tooltipData.pct < 0.01 ? "<1" : Math.round(tooltipData.pct * 100)
+        }%` +
+          (tooltipData.exp > -1
+            ? `<br> Expected: ${
+                tooltipData.exp < 0.01
+                  ? "<1"
+                  : Math.round(tooltipData.exp * 100)
+              }%`
+            : "")
       );
 
       const tooltipBox = tooltip.node().getBoundingClientRect();
@@ -160,7 +169,7 @@ const racePlot = (
     });
   });
 
-  Object.entries(data).forEach(([group, { pct }], i) => {
+  Object.entries(data).forEach(([group, { pct, exp }], i) => {
     // console.log({
     //   group,
     //   currPct,
@@ -174,7 +183,7 @@ const racePlot = (
       .attr("y", y(i) - (collapsed ? 20 : 30))
       .attr("height", collapsed ? 20 : 30)
       .attr("width", x(pct) - margin.left)
-      .attr("fill", "#AFDBF4");
+      .attr("fill", exp < pct ? "#AFDBF4" : "#d3d3d399");
 
     if (collapsed) {
       bars
@@ -195,6 +204,24 @@ const racePlot = (
         .attr("alignment-baseline", "middle");
     }
 
+    if (exp !== undefined && pct > 0.01) {
+      bars
+        .append("line")
+        .attr("x1", x(exp))
+        .attr("x2", x(exp))
+        .attr("y1", y(i))
+        .attr("y2", y(i) - (collapsed ? 20 : 30))
+        .attr("stroke", "black");
+
+      bars
+        .append("line")
+        .attr("y1", y(i) - (collapsed ? 10 : 15))
+        .attr("y2", y(i) - (collapsed ? 10 : 15))
+        .attr("x1", x(pct))
+        .attr("x2", x(exp))
+        .attr("stroke", "black");
+    }
+
     // overlap
     //   .append("rect")
     //   .attr("y", y(j) - 30)
@@ -204,6 +231,58 @@ const racePlot = (
     //   .attr("width", x(1) - margin.right)
     //   .attr("fill", "#00000000");
   });
+  svg
+    .append("svg:defs")
+    .append("svg:marker")
+    .attr("id", "triangle")
+    .attr("refX", 3)
+    .attr("refY", 3)
+    .attr("markerWidth", 6)
+    .attr("markerHeight", 6)
+    .attr("orient", "auto")
+    .append("path")
+    .attr("d", "M 6 3 0 6 0 0")
+    .attr("fill", "black");
+  bars
+    .append("text")
+    .text("Expected %" + (collapsed ? "" : " from population."))
+    .attr("x", x(0.37))
+    .attr("y", y(3.3))
+    .attr("font-size", "18px")
+    .attr("text-anchor", "start")
+    .attr("alignment-baseline", "middle");
+  if (collapsed) {
+    bars
+      .append("text")
+      .text("from population.")
+      .attr("x", x(0.37))
+      .attr("y", y(3.3) + 18)
+      .attr("font-size", "18px")
+      .attr("text-anchor", "start")
+      .attr("alignment-baseline", "middle");
+  }
+  bars
+    .append("path")
+    .attr(
+      "d",
+      `M ${x(0.37) - 5} ${y(3.3)} Q ${x(0.28)} ${y(3)}, ${
+        x(Object.values(data)[4].exp) + 6
+      } ${y(4) + 10}`
+    )
+    .attr("marker-end", "url(#triangle)")
+    .attr("fill", "none")
+    .attr("stroke", "black")
+    .attr("stroke-width", "2px");
+
+  container
+    .append("p")
+    .style(
+      "font-family",
+      "Baskerville,Baskerville Old Face,Hoefler Text,Garamond,Times New Roman,serif"
+    )
+    .text("Source: IVASPDKSAPD. Raw race groups aggregated into these groups.")
+    .style("margin", "0 10px")
+    .append("hr");
 };
 
 export default racePlot;

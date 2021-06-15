@@ -3,3 +3,6 @@
 #race {
   /* background-color: #d3d3d333; */
 }
+div > p {
+  font-family: Georgia, serif;
+}

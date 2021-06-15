@@ -385,11 +385,13 @@ arrests %>%
 arrType <- arrests %>%
   group_by(group, desc) %>%
   summarise(n = n()) %>%
+  ungroup() %>%
   mutate(
     viol = ifelse(group %in% c("Resisting arrest", "Fighting", "Robbery/Burglary/Theft"), 1, 0)
   ) %>%
   arrange(group, desc(n)) %>% 
-  drop_na()
+  drop_na() %>%
+  mutate(pct = n / sum(n))
 
 left_join(
   arrType,
@@ -397,7 +399,7 @@ left_join(
     group_by(group) %>%
     summarise(tot = sum(n)),
   on=c("group"="group")
-) %>%
+)  %>%
   filter(tot >= 10) %>%
   select(-tot) %>%
   arrange(group, desc(n)) %>%

@@ -178,5 +178,7 @@ let raceData = null;
   ).then((data) => {
     raceData = data;
     resizeRacePlot();
+
+    console.log(Object.values(data).reduce((a, { pct }) => a + pct, 0));
   });
 })();

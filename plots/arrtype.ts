@@ -238,7 +238,7 @@ const arrestType = (
       .attr("y", y(j) - (collapsed ? 0 : 18))
       .attr("height", collapsed ? 18 : 18)
       .attr("width", x(currx) - margin.left)
-      .attr("fill", viol ? "#9FCBE4" : "#d3d3d344");
+      .attr("fill", viol ? "#9FCBE4" : "#d3d3d399");
 
     if (viol === 1) {
       lastViolx = currx;
@@ -259,6 +259,7 @@ const arrestType = (
     .attr("y", y(lastViolIdx) - (collapsed ? 3 : 6) + 30)
     .text("Violent Crimes make up")
     .attr("font-size", "20px")
+    .attr("font-weight", "bold")
     .attr("text-anchor", collapsed ? "end" : "start")
     .attr("alignment-baseline", "middle")
     .attr("fill", "#9FCBE4");
@@ -269,12 +270,18 @@ const arrestType = (
     .attr("text-anchor", collapsed ? "end" : "start")
     .text("less than _% of all crimes.")
     .attr("font-size", "20px")
+    .attr("font-weight", "bold")
     .attr("alignment-baseline", "middle")
     .attr("fill", "#9FCBE4");
   container
     .append("p")
+    .style(
+      "font-family",
+      "Baskerville,Baskerville Old Face,Hoefler Text,Garamond,Times New Roman,serif"
+    )
     .text("Source: IVASPDKSAPD. Raw race groups aggregated into these groups.")
-    .style("margin", "0 0 0 10px");
+    .style("margin", "0 10px")
+    .append("hr");
 };
 
 export default arrestType;

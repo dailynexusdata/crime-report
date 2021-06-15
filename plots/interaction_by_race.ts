@@ -230,11 +230,14 @@ const interactionByRacePlot = (
     //   .attr("fill", "#00000000");
   });
   container
-    .append("div")
-    .html(
-      "<p><i>Source:</i> IVASPDKSAPD. Raw race groups aggregated into these groups.</p>"
+    .append("p")
+    .style(
+      "font-family",
+      "Baskerville,Baskerville Old Face,Hoefler Text,Garamond,Times New Roman,serif"
     )
-    .style("margin", "0 0 0 10px");
+    .text("Source: IVASPDKSAPD. Raw race groups aggregated into these groups.")
+    .style("margin", "0 10px")
+    .append("hr");
 };
 
 export default interactionByRacePlot;
