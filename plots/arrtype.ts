@@ -1,4 +1,5 @@
 import * as d3 from "d3";
+import { toNamespacedPath } from "path/posix";
 
 interface dataType {
   [group: string]: Array<{
@@ -25,8 +26,24 @@ const arrestType = (
   margin: marginType,
   collapsed: boolean
 ) => {
-  console.log(data);
-  const container = d3.select("#arrtype");
+  const tooltipAlignmentx = (x, tooltipBox) => {
+    return (
+      Math.min(
+        size.width - margin.left - tooltipBox.width - (collapsed ? 30 : 10),
+        x - margin.left + (collapsed ? -15 : 10)
+      ) + "px"
+    );
+  };
+
+  const tooltipAlignmenty = (y, tooltipBox) => {
+    return Math.max(0, y) + "px";
+  };
+  const container = d3
+    .select("#arrtype")
+    .style(
+      "font-family",
+      "Baskerville,Baskerville Old Face,Hoefler Text,Garamond,Times New Roman,serif"
+    );
   container
     .append("h2")
     .text("Types of Crimes")
@@ -40,16 +57,16 @@ const arrestType = (
     .style("width", size.width);
 
   const svg = plotArea.append("svg");
-  const legendarea = plotArea
-    .append("div")
-    .style("display", "flex")
-    .style("justify-content", "space-evenly")
-    .style("margin-bottom", "5px")
-    .style("height", "20px")
-    .style("margin-left", margin.left - margin.right + "px")
-    .style("width", size.width - margin.left - margin.right + "px");
+  //   const legendarea = plotArea
+  //     .append("div")
+  //     .style("display", "flex")
+  //     .style("justify-content", "space-evenly")
+  //     .style("margin-bottom", "5px")
+  //     .style("height", "20px")
+  //     .style("margin-left", margin.left - margin.right + "px")
+  //     .style("width", size.width - margin.left - margin.right + "px");
 
-  legendarea.attr("height", 20).attr("width", size.width);
+  //   legendarea.attr("height", 20).attr("width", size.width);
   svg.attr("height", size.height).attr("width", size.width);
 
   const y = d3
@@ -67,17 +84,17 @@ const arrestType = (
 
   svg
     .append("text")
-    .text("% of Crimes")
+    .text("% of Total Crimes")
     .attr("x", x(0))
     .attr("y", 15)
     // .style("font-size", "16px")
-    .attr("fill", "#d3d3d3");
+    .attr("fill", "#adadad");
 
   svg
     .append("g")
     .style("font-size", "16px")
     .attr("transform", "translate(0, 40)")
-    .attr("color", "#d3d3d3")
+    .attr("color", "#adadad")
     .call(
       d3
         .axisTop(x)
@@ -104,7 +121,7 @@ const arrestType = (
     .style("border", "1px solid black")
     .style("border-radius", "5px")
     .style("padding", "5px")
-    .style("width", "225px")
+    .style("width", "230px")
     .style("display", "none");
 
   const labels = svg.append("g");
@@ -134,16 +151,20 @@ const arrestType = (
       d3.selectAll("rect[class^='bar']").attr("fill-opacity", 0);
       d3.selectAll(`.bar-${group.split(/[ /]/)[0]}`).attr("fill-opacity", 1);
 
-      console.log(tooltipData);
+      tooltip.html(
+        `${group}<hr>${tooltipData
+          .map(
+            ({ desc, pct }) =>
+              `${desc}: ${pct < 0.005 ? "<1" : Math.round(pct * 100)}%`
+          )
+          .join("<br>")}`
+      );
 
-      tooltip
-        .html(
-          `${group}<hr>${tooltipData
-            .map(({ desc, n }) => `${desc}: ${n}`)
-            .join("<br>")}`
-        )
-        .style("left", xpos - size.width / 2 + 60 + "px")
-        .style("top", ypos + "px");
+      const tooltipBox = tooltip.node().getBoundingClientRect();
+      const xval = tooltipAlignmentx(xpos, tooltipBox);
+      const yval = tooltipAlignmenty(ypos, tooltipBox);
+
+      tooltip.style("left", xval).style("top", yval);
     });
     plotArea.on("mouseleave", () => {
       labels.style("display", "block");
@@ -192,32 +213,32 @@ const arrestType = (
       //       .attr("text-anchor", "start")
       //       .attr("alignment-baseline", "middle");
       //   }
-      if (collapsed) {
-        bars
-          .append("text")
-          .text(group)
-          .attr("x", x(0))
-          .attr("y", y(j) - 3)
-          .attr("text-anchor", "start");
-      } else {
-        bars
-          .append("text")
-          .text(group)
-          .attr("x", x(0) - 10)
-          .attr("y", y(j) - 9)
-          .attr("text-anchor", "end")
-          .attr("alignment-baseline", "middle");
-      }
       currx += crime.pct;
     });
 
+    if (collapsed) {
+      bars
+        .append("text")
+        .text(group)
+        .attr("x", x(0))
+        .attr("y", y(j) - 3)
+        .attr("text-anchor", "start");
+    } else {
+      bars
+        .append("text")
+        .text(group)
+        .attr("x", x(0) - 10)
+        .attr("y", y(j) - 9)
+        .attr("text-anchor", "end")
+        .attr("alignment-baseline", "middle");
+    }
     overlap
       .append("rect")
       .attr("x", x(0))
       .attr("y", y(j) - (collapsed ? 0 : 18))
       .attr("height", collapsed ? 18 : 18)
       .attr("width", x(currx) - margin.left)
-      .attr("fill", viol ? "#9FCBE4" : "#d3d3d3");
+      .attr("fill", viol ? "#9FCBE4" : "#d3d3d344");
 
     if (viol === 1) {
       lastViolx = currx;
@@ -228,26 +249,32 @@ const arrestType = (
         .attr("x", x(currx) + 5)
         .attr("y", y(j) - (collapsed ? -2 : 8))
         .attr("alignment-baseline", collapsed ? "hanging" : "middle")
-        .attr("fill", "#9FCBE4");
+        .attr("fill", "#9FCBE4")
+        .attr("font-weight", "bold");
     }
   });
-  console.log(lastViolx, lastViolIdx);
-  bars
+  labels
     .append("text")
-    .attr("x", x(lastViolx) + 100)
-    .attr("y", y(lastViolIdx) - (collapsed ? 3 : 6))
+    .attr("x", collapsed ? size.width - margin.right : x(lastViolx) + 150)
+    .attr("y", y(lastViolIdx) - (collapsed ? 3 : 6) + 30)
     .text("Violent Crimes make up")
     .attr("font-size", "20px")
+    .attr("text-anchor", collapsed ? "end" : "start")
     .attr("alignment-baseline", "middle")
     .attr("fill", "#9FCBE4");
-  bars
+  labels
     .append("text")
-    .attr("x", x(lastViolx) + 100)
-    .attr("y", y(lastViolIdx) - (collapsed ? 3 : 6) + 20)
+    .attr("x", collapsed ? size.width - margin.right : x(lastViolx) + 150)
+    .attr("y", y(lastViolIdx) - (collapsed ? 3 : 6) + 50)
+    .attr("text-anchor", collapsed ? "end" : "start")
     .text("less than _% of all crimes.")
     .attr("font-size", "20px")
     .attr("alignment-baseline", "middle")
     .attr("fill", "#9FCBE4");
+  container
+    .append("p")
+    .text("Source: IVASPDKSAPD. Raw race groups aggregated into these groups.")
+    .style("margin", "0 0 0 10px");
 };
 
 export default arrestType;

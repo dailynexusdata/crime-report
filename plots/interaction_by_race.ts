@@ -23,13 +23,34 @@ const interactionByRacePlot = (
   margin: marginType,
   collapsed: boolean
 ) => {
-  const color = ["#9FCBE4", "#d3d3d388", "#d3d3d355"];
+  const color = ["#AFDBF4", "#d3d3d344", "#d3d3d377"];
 
-  const container = d3.select("#interaction_by_race");
+  const tooltipAlignmentx = (x, tooltipBox) => {
+    return (
+      Math.min(
+        size.width - margin.left - tooltipBox.width - (collapsed ? 55 : 35),
+        x - margin.left - (collapsed ? 40 : 20)
+      ) + "px"
+    );
+  };
+
+  const tooltipAlignmenty = (y, tooltipBox) => {
+    return Math.max(60, y) + "px";
+  };
+  const container = d3
+    .select("#interaction_by_race")
+    .style(
+      "font-family",
+      "Baskerville,Baskerville Old Face,Hoefler Text,Garamond,Times New Roman,serif"
+    );
   container
     .append("h2")
     .text("Police Involvement by Race")
     .style("margin", "10px 0 0 10px");
+  // container
+  //   .append("p")
+  //   .text("Crimes from 2013, 2018 and 2019.")
+  //   .style("margin", "10px 0 0 10px");
 
   const plotArea = container
     .append("div")
@@ -59,21 +80,22 @@ const interactionByRacePlot = (
   const x = d3.scaleLinear().range([margin.left, size.width - margin.right]);
 
   const bars = svg.append("g");
+  const lab = svg.append("g");
   //   const overlap = svg.append("g");
 
   svg
     .append("text")
-    .text("% of Interactions")
+    .text("% of Interactions by Race")
     .attr("x", x(0))
     .attr("y", 15)
     // .style("font-size", "16px")
-    .attr("fill", "#d3d3d3");
+    .attr("fill", "#adadad");
 
   svg
     .append("g")
     .style("font-size", "16px")
     .attr("transform", "translate(0, 40)")
-    .attr("color", "#d3d3d3")
+    .attr("color", "#adadad")
     .call(
       d3
         .axisTop(x)
@@ -126,20 +148,18 @@ const interactionByRacePlot = (
         Array<dataType>
       ];
 
+      tooltip.html(
+        `${group}<hr>Arrests: ${Math.round(
+          tooltipData[0].val * 100
+        )}%<br>Citations: ${Math.round(
+          tooltipData[1].val * 100
+        )}%<br>DFC: ${Math.round(tooltipData[2].val * 100)}%`
+      );
+
+      const tooltipBox = tooltip.node().getBoundingClientRect();
       tooltip
-        .html(
-          `${group}<hr>Arrests: ${tooltipData[0].amt} of ${
-            tooltipData[0].tot
-          }, ${Math.round(tooltipData[0].val * 100)}%<br>Citations: ${
-            tooltipData[1].amt
-          } of ${tooltipData[1].tot}, ${Math.round(
-            tooltipData[1].val * 100
-          )}%<br>DFC: ${tooltipData[2].amt} of ${
-            tooltipData[2].tot
-          }, ${Math.round(tooltipData[2].val * 100)}%`
-        )
-        .style("left", xpos - size.width / 2 + 60 + "px")
-        .style("top", ypos + "px");
+        .style("left", tooltipAlignmentx(xpos, tooltipBox))
+        .style("top", tooltipAlignmenty(ypos, tooltipBox));
     });
     plotArea.on("mouseleave", () => {
       tooltip.style("display", "none");
@@ -148,7 +168,6 @@ const interactionByRacePlot = (
 
   Object.entries(data).forEach(([group, interactions], j) => {
     let currPct = 0;
-
     (interactions as Array<dataType>).forEach((int: dataType, i: number) => {
       // console.log({
       //   group,
@@ -169,32 +188,37 @@ const interactionByRacePlot = (
         );
 
       if (group === "Black" && i === 0) {
-        bars
+        lab
           .append("text")
           .attr("x", x(int.val) + 5)
           .attr("y", y(j) - (collapsed ? 10 - 2 : 15))
           .text(`${Math.round(int.val * 100)}%`)
+          .attr("fill", "#afdbf4")
           .attr("text-anchor", "start")
+          .attr("font-weight", "bold")
           .attr("alignment-baseline", "middle");
       }
-      if (collapsed) {
-        bars
-          .append("text")
-          .text(group)
-          .attr("x", x(0))
-          .attr("y", y(j) - 22)
-          .attr("text-anchor", "start");
-      } else {
-        bars
-          .append("text")
-          .text(group)
-          .attr("x", x(0) - 10)
-          .attr("y", y(j) - 15)
-          .attr("text-anchor", "end")
-          .attr("alignment-baseline", "middle");
-      }
+
       currPct += int.val;
     });
+    if (collapsed) {
+      bars
+        .append("text")
+        .text(group)
+        .attr("x", x(0))
+        .attr("y", y(j) - 22)
+        .style("font-size", "13pt")
+        .attr("text-anchor", "start");
+    } else {
+      bars
+        .append("text")
+        .text(group)
+        .attr("x", x(0) - 10)
+        .attr("y", y(j) - 15)
+        .attr("text-anchor", "end")
+        .style("font-size", "13pt")
+        .attr("alignment-baseline", "middle");
+    }
 
     // overlap
     //   .append("rect")
@@ -205,6 +229,12 @@ const interactionByRacePlot = (
     //   .attr("width", x(1) - margin.right)
     //   .attr("fill", "#00000000");
   });
+  container
+    .append("div")
+    .html(
+      "<p><i>Source:</i> IVASPDKSAPD. Raw race groups aggregated into these groups.</p>"
+    )
+    .style("margin", "0 0 0 10px");
 };
 
 export default interactionByRacePlot;

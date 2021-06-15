@@ -1,10 +1,11 @@
 import * as d3 from "d3";
 
-interface arrTypeDataType {
-  group: string;
-  desc: string;
-  n: number;
-  viol: 0 | 1;
+interface dataType {
+  race: string;
+  val: number;
+  inv: string;
+  tot: number;
+  amt: number;
 }
 interface marginType {
   left: number;
@@ -16,7 +17,193 @@ interface sizeType {
   height: number;
   width: number;
 }
+const racePlot = (
+  data: dataType,
+  size: sizeType,
+  margin: marginType,
+  collapsed: boolean
+) => {
+  console.log(data);
+  const tooltipAlignmentx = (x, tooltipBox) => {
+    return (
+      Math.min(
+        size.width - margin.left - tooltipBox.width - (collapsed ? 55 : 35),
+        x - margin.left - (collapsed ? 40 : 20)
+      ) + "px"
+    );
+  };
 
-const arrestType = (data, size, margin) => {};
+  const tooltipAlignmenty = (y, tooltipBox) => {
+    return Math.max(60, y) + "px";
+  };
+  const container = d3
+    .select("#race")
+    .style(
+      "font-family",
+      "Baskerville,Baskerville Old Face,Hoefler Text,Garamond,Times New Roman,serif"
+    );
+  container
+    .append("h2")
+    .text("Crimes by Race")
+    .style("margin", "10px 0 0 10px");
 
-export default arrestType;
+  const plotArea = container
+    .append("div")
+    .style("display", "flex")
+    .style("flex-direction", "column")
+    .style("align-items", "center")
+    .style("width", size.width);
+
+  const svg = plotArea.append("svg");
+  const legendarea = plotArea
+    .append("div")
+    .style("display", "flex")
+    .style("justify-content", "space-evenly")
+    .style("margin-bottom", "5px")
+    .style("height", "20px")
+    .style("margin-left", margin.left - margin.right + "px")
+    .style("width", size.width - margin.left - margin.right + "px");
+
+  legendarea.attr("height", 20).attr("width", size.width);
+  svg.attr("height", size.height).attr("width", size.width);
+
+  const y = d3
+    .scaleLinear()
+    .domain([0, 6])
+    .range([size.height - margin.bottom, margin.top]);
+
+  const x = d3
+    .scaleLinear()
+    .domain([0, 0.7])
+    .range([margin.left, size.width - margin.right]);
+
+  const bars = svg.append("g");
+  const lab = svg.append("g");
+  //   const overlap = svg.append("g");
+
+  svg
+    .append("text")
+    .text("% of Total Crimes")
+    .attr("x", x(0))
+    .attr("y", 15)
+    // .style("font-size", "16px")
+    .attr("fill", "#adadad");
+
+  svg
+    .append("g")
+    .style("font-size", "16px")
+    .attr("transform", "translate(0, 40)")
+    .attr("color", "#adadad")
+    .call(
+      d3
+        .axisTop(x)
+        .ticks(5)
+        .tickFormat((d) => `${Math.round((d as number) * 100)}`)
+    );
+
+  ["Arrests", "Citations", "Did Not File Charges"].forEach((lab, i) => {
+    legendarea
+      .append("p")
+      .text(lab)
+      .style("margin", 0)
+      .style("padding", "2px 5px")
+      .attr("text-anchor", "middle")
+      .style("background-color", "#AFDBF4")
+      .attr("alignment-baseline", "middle");
+  });
+  const tooltip = plotArea
+    .append("div")
+    .style("position", "absolute")
+    .append("div")
+    .style("position", "relative")
+    .style("background-color", "white")
+    .style("border", "1px solid black")
+    .style("border-radius", "5px")
+    .style("padding", "5px")
+    .style("width", "175px")
+    .style("display", "none");
+
+  plotArea.on("mouseenter", () => {
+    plotArea.on("mousemove", (event) => {
+      tooltip.style("display", "block");
+
+      //   tooltip.html(interactions[0].race);
+      const [xpos, ypos] = d3.pointer(event);
+
+      if (
+        ypos < margin.top + 10 ||
+        ypos > size.height - 10 ||
+        xpos < margin.left ||
+        xpos > size.width - margin.right
+      ) {
+        tooltip.style("display", "none");
+        return;
+      }
+
+      const idx = Math.min(Math.max(Math.floor(y.invert(ypos)), 0), 5);
+      const [group, tooltipData] = Object.entries(data)[idx] as [
+        string,
+        Array<dataType>
+      ];
+
+      tooltip.html(
+        `${group}<hr>Arrests: ${Math.round(tooltipData.pct * 100)}%`
+      );
+
+      const tooltipBox = tooltip.node().getBoundingClientRect();
+      tooltip
+        .style("left", tooltipAlignmentx(xpos, tooltipBox))
+        .style("top", tooltipAlignmenty(ypos, tooltipBox));
+    });
+    plotArea.on("mouseleave", () => {
+      tooltip.style("display", "none");
+    });
+  });
+
+  Object.entries(data).forEach(([group, { pct }], i) => {
+    // console.log({
+    //   group,
+    //   currPct,
+    //   inval: int["val"],
+    //   a1: x(currPct),
+    //   a2: x(int.val),
+    // });
+    bars
+      .append("rect")
+      .attr("x", x(0))
+      .attr("y", y(i) - (collapsed ? 20 : 30))
+      .attr("height", collapsed ? 20 : 30)
+      .attr("width", x(pct) - margin.left)
+      .attr("fill", "#AFDBF4");
+
+    if (collapsed) {
+      bars
+        .append("text")
+        .text(group)
+        .attr("x", x(0))
+        .attr("y", y(i) - 22)
+        .style("font-size", "13pt")
+        .attr("text-anchor", "start");
+    } else {
+      bars
+        .append("text")
+        .text(group)
+        .attr("x", x(0) - 10)
+        .attr("y", y(i) - 15)
+        .attr("text-anchor", "end")
+        .style("font-size", "13pt")
+        .attr("alignment-baseline", "middle");
+    }
+
+    // overlap
+    //   .append("rect")
+    //   .attr("y", y(j) - 30)
+    //   .attr("height", 30)
+    //   .attr("x", x(0))
+    //   .attr("class", "overlap")
+    //   .attr("width", x(1) - margin.right)
+    //   .attr("fill", "#00000000");
+  });
+};
+
+export default racePlot;

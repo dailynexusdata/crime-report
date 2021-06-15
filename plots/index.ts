@@ -1,5 +1,6 @@
 import interactionByRacePlot from "./interaction_by_race";
 import arrestType from "./arrtype";
+import racePlot from "./race";
 import * as d3 from "d3";
 
 interface irDataType {
@@ -55,7 +56,6 @@ const groupIRData = (data: Array<irDataType>) => {
 
 const groupArrTypeData = (data: arrTypeDataType) => {
   const output = {};
-  console.log(data);
 
   data.forEach((dat) => {
     if (Object.keys(output).includes(dat.group)) {
@@ -95,6 +95,7 @@ const groupArrTypeData = (data: arrTypeDataType) => {
 
 let irData = null;
 let arrData = null;
+let raceData = null;
 
 (() => {
   const resizeArrType = () => {
@@ -106,7 +107,7 @@ let arrData = null;
     const margin: marginType = {
       left: 20 + (window.innerWidth < 600 ? 0 : 160),
       right: 20,
-      top: 60,
+      top: 68,
       bottom: 10 + (window.innerWidth < 600 ? 20 : 0),
     };
     d3.select("#arrtype")
@@ -134,11 +135,36 @@ let arrData = null;
       .remove();
     interactionByRacePlot(irData, size, margin, window.innerWidth < 600);
   };
+  const resizeRacePlot = () => {
+    const size = {
+      height: 300,
+      width: Math.max(Math.min(600, window.innerWidth), 300),
+    };
+
+    const margin: marginType = {
+      left: 20 + (window.innerWidth < 600 ? 0 : 160),
+      right: 20,
+      top: 40,
+      bottom: 10,
+    };
+    d3.select("#race")
+      .style("width", size.width + "px")
+      .selectAll("*")
+      .remove();
+    racePlot(raceData, size, margin, window.innerWidth < 600);
+  };
   window.addEventListener("resize", () => {
     resizeIR();
     resizeArrType();
+    resizeRacePlot();
   });
 
+  d3.csv(
+    "https://raw.githubusercontent.com/dailynexusdata/crime-report/main/dist/data/arrType.csv"
+  ).then((data) => {
+    arrData = groupArrTypeData(data as any);
+    resizeArrType();
+  });
   d3.csv(
     "https://raw.githubusercontent.com/dailynexusdata/crime-report/main/dist/data/involvement_by_race.csv"
   ).then((data) => {
@@ -146,10 +172,11 @@ let arrData = null;
     delete irData["Other"];
     resizeIR();
   });
-  d3.csv(
-    "https://raw.githubusercontent.com/dailynexusdata/crime-report/main/dist/data/arrType.csv"
+
+  d3.json(
+    "https://raw.githubusercontent.com/dailynexusdata/crime-report/main/dist/data/race.json"
   ).then((data) => {
-    arrData = groupArrTypeData(data as any);
-    resizeArrType();
+    raceData = data;
+    resizeRacePlot();
   });
 })();
