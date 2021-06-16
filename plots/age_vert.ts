@@ -114,13 +114,15 @@ const agePlot = (data, size, margin) => {
   const y1 = d3
     .scaleLinear()
     .domain([0, 1100])
-    .range([size.height1 - 5, margin.top - 5]);
+    .range([size.height1 - 10, margin.top - 5]);
 
   const x = d3
     .scaleLinear()
     .domain([grouped[0][0], grouped[grouped.length - 1][0]])
     .range([margin.left, size.width - margin.right]);
-  const y2 = d3.scaleLinear().range([size.height2 - margin.bottom, margin.top]);
+  const y2 = d3
+    .scaleLinear()
+    .range([size.height2 - margin.bottom, margin.top - 10]);
 
   svgBars
     .append("g")
@@ -148,7 +150,7 @@ const agePlot = (data, size, margin) => {
     .append("text")
     .text("% of Total Crimes")
     .attr("x", x(18) - 46)
-    .attr("y", margin.top - 10)
+    .attr("y", margin.top - 20)
     // .style("font-size", "16px")
     .attr("text-anchor", "start")
     .attr("fill", "#adadad");
@@ -206,7 +208,13 @@ const agePlot = (data, size, margin) => {
     .attr("fill", "none")
     .attr("stroke", "black")
     .attr("stroke-width", "2px");
-
+  svgLine
+    .append("line")
+    .attr("x1", x(17))
+    .attr("x2", x(66))
+    .attr("y1", y1(0))
+    .attr("y2", y1(0))
+    .attr("stroke", "#d3d3d3");
   const grays = d3.scaleSequential(d3.interpolateGreys).domain([5, -5]);
 
   const getColor = (i) => {

@@ -340,6 +340,13 @@ const agePlot = (data, size, margin) => {
       .attr("alignment-baseline", "middle");
   });
 
+  svgLine
+    .append("line")
+    .attr("x1", x2(0))
+    .attr("x2", x2(0))
+    .attr("y1", y(18))
+    .attr("y2", y(66))
+    .attr("stroke", "#d3d3d3");
   const line = d3
     .line()
     .x((d) => {
