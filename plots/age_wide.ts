@@ -248,7 +248,9 @@ const agePlot = (data, size, margin) => {
       plotArea.selectAll(`.bar-${idx}`).attr("fill-opacity", 1);
 
       tooltip.html(
-        `Age ${group}<hr>${tooltipData
+        `Age ${group}<hr><b>Total # of Crimes: ${
+          collapsed[group]
+        }</b><br>${tooltipData
           .map(
             ([grp, pct]) =>
               `${grp}: ${
