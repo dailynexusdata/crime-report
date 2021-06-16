@@ -139,8 +139,6 @@ const arrestType = (
   plotArea.on("mouseenter", () => {
     labels.style("display", "none");
     plotArea.on("mousemove", (event) => {
-      tooltip.style("display", "block");
-
       //   tooltip.html(interactions[0].race);
       const [xpos, ypos] = d3.pointer(event);
 
@@ -157,8 +155,10 @@ const arrestType = (
       const idx = Math.min(Math.max(Math.round(y.invert(ypos)), 0), 11);
       const [group, tooltipData] = Object.entries(data)[idx];
 
-      d3.selectAll("rect[class^='bar']").attr("fill-opacity", 0);
-      d3.selectAll(`.bar-${group.split(/[ /]/)[0]}`).attr("fill-opacity", 1);
+      plotArea.selectAll("rect[class^='bar']").attr("fill-opacity", 0);
+      plotArea
+        .selectAll(`.bar-${group.split(/[ /]/)[0]}`)
+        .attr("fill-opacity", 1);
 
       tooltip.html(
         `${group}<hr>${tooltipData
@@ -173,12 +173,12 @@ const arrestType = (
       const xval = tooltipAlignmentx(xpos, tooltipBox);
       const yval = tooltipAlignmenty(ypos, tooltipBox);
 
-      tooltip.style("left", xval).style("top", yval);
+      tooltip.style("left", xval).style("top", yval).style("display", "block");
     });
     plotArea.on("mouseleave", () => {
       labels.style("display", "block");
       tooltip.style("display", "none");
-      d3.selectAll("rect[class^='bar']").attr("fill-opacity", 0);
+      plotArea.selectAll("rect[class^='bar']").attr("fill-opacity", 0);
     });
   });
 
@@ -247,7 +247,7 @@ const arrestType = (
       .attr("y", y(j) - (collapsed ? 0 : 18))
       .attr("height", collapsed ? 18 : 18)
       .attr("width", x(currx) - margin.left)
-      .attr("fill", viol ? "#9FCBE4" : "#d3d3d399");
+      .attr("fill", viol ? "#005AA3" : "#d3d3d399");
 
     if (viol === 1) {
       lastViolx = currx;
@@ -258,7 +258,7 @@ const arrestType = (
         .attr("x", x(currx) + 5)
         .attr("y", y(j) - (collapsed ? -2 : 8))
         .attr("alignment-baseline", collapsed ? "hanging" : "middle")
-        .attr("fill", "#9FCBE4")
+        .attr("fill", "#005AA3")
         .attr("font-weight", "bold");
     }
   });
@@ -271,7 +271,7 @@ const arrestType = (
     .attr("font-weight", "bold")
     .attr("text-anchor", collapsed ? "end" : "start")
     .attr("alignment-baseline", "middle")
-    .attr("fill", "#9FCBE4");
+    .attr("fill", "#005AA3");
   labels
     .append("text")
     .attr("x", collapsed ? size.width - margin.right : x(lastViolx) + 150)
@@ -281,7 +281,7 @@ const arrestType = (
     .attr("font-size", collapsed ? "16px" : "20px")
     .attr("font-weight", "bold")
     .attr("alignment-baseline", "middle")
-    .attr("fill", "#9FCBE4");
+    .attr("fill", "#005AA3");
   container
     .append("p")
     .style(

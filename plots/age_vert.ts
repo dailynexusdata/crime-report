@@ -1,5 +1,4 @@
 import * as d3 from "d3";
-import { svg } from "d3";
 
 interface arrTypeDataType {
   group: string;
@@ -149,7 +148,7 @@ const agePlot = (data, size, margin) => {
     .append("text")
     .text("% of Total Crimes")
     .attr("x", x(18) - 46)
-    .attr("y", size.height1)
+    .attr("y", size.height1 - 5)
     // .style("font-size", "16px")
     .attr("text-anchor", "start")
     .attr("fill", "#adadad");
@@ -189,7 +188,7 @@ const agePlot = (data, size, margin) => {
     .style("display", "none");
 
   plotArea.on("mouseenter", () => {
-    d3.selectAll("rect[class^='bar']").attr("fill-opacity", 1);
+    plotArea.selectAll("rect[class^='bar']").attr("fill-opacity", 1);
     plotArea.on("mousemove", (event) => {
       tooltip.style("display", "block");
 
@@ -202,7 +201,7 @@ const agePlot = (data, size, margin) => {
         xpos < margin.left ||
         xpos > size.width - margin.right
       ) {
-        d3.selectAll("rect[class^='bar']").attr("fill-opacity", 1);
+        plotArea.selectAll("rect[class^='bar']").attr("fill-opacity", 1);
         tooltip.style("display", "none");
         return;
       }
@@ -217,8 +216,8 @@ const agePlot = (data, size, margin) => {
         });
       // .filter(([a, b]) => b > 0);
 
-      d3.selectAll("rect[class^='bar']").attr("fill-opacity", 0.1);
-      d3.selectAll(`.bar-${idx}`).attr("fill-opacity", 1);
+      plotArea.selectAll("rect[class^='bar']").attr("fill-opacity", 0.1);
+      plotArea.selectAll(`.bar-${idx}`).attr("fill-opacity", 1);
 
       tooltip.html(
         `Age ${group}<hr>${tooltipData
@@ -240,7 +239,7 @@ const agePlot = (data, size, margin) => {
     plotArea.on("mouseleave", () => {
       tooltip.style("display", "none");
       // d3.selectAll("rect[class^='bar']").attr("fill-opacity", 0);
-      d3.selectAll("rect[class^='bar']").attr("fill-opacity", 1);
+      plotArea.selectAll("rect[class^='bar']").attr("fill-opacity", 1);
     });
   });
 
@@ -248,7 +247,7 @@ const agePlot = (data, size, margin) => {
 
   const getColor = (i) => {
     if (i === 0) {
-      return "#CC575F"; //"#005aa3";
+      return "#CC575F88"; //"#005aa3";
     }
     if (i === 1) {
       return "#003660";

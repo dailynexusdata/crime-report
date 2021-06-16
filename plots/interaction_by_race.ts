@@ -120,7 +120,7 @@ const interactionByRacePlot = (
       .style("margin", "3px")
       .style("padding", "2px 5px")
       .attr("text-anchor", "middle")
-      .style("background-color", color[i] + (i !== 0 ? "" : "88"))
+      .style("background-color", color[i])
       .attr("alignment-baseline", "middle");
   });
   const tooltip = plotArea
@@ -194,7 +194,8 @@ const interactionByRacePlot = (
         .attr("width", x(int.val) - margin.left)
         .attr(
           "fill",
-          color[i] + ((group === "Black" && i === 0) || i !== 0 ? "" : "88")
+          group === "Black" && i === 0 ? "#005AA3" : color[i]
+          // color[i] + ((group === "Black" && i === 0) || i !== 0 ? "" : "88")
         );
 
       if (group === "Black" && i === 0) {
@@ -203,7 +204,7 @@ const interactionByRacePlot = (
           .attr("x", x(int.val) + 5)
           .attr("y", y(j) - (collapsed ? 10 - 2 : 15))
           .text(`${Math.round(int.val * 100)}%`)
-          .attr("fill", "#afdbf4")
+          .attr("fill", "#005AA3")
           .attr("text-anchor", "start")
           .attr("font-weight", "bold")
           .attr("alignment-baseline", "middle");
