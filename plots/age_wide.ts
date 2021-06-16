@@ -37,17 +37,17 @@ const crimes = [
   "Disorderly Conduct",
   "Resisting arrest",
   "Fake ID",
-  "Abuse",
-  "Driving w/o License",
   "Drugs",
+  // "Driving w/o License",
+  // "Drugs",
   // "Failure to appear",
-  // "Fighting",
+  "Fighting",
   // "Illegal camping",
   // "Juvenile",
   // "License revoked",
   // "Property Damage",
   // "Public Nudity",
-  // "Robbery/Burglary/Theft",
+  "Robbery/Burglary/Theft",
   // "Trespassing",
 ];
 
@@ -150,8 +150,9 @@ const agePlot = (data, size, margin) => {
   svgBars
     .append("text")
     .text("Age")
-    .attr("x", 0)
-    .attr("y", y(18))
+    .attr("x", x1(0) - 10)
+    .attr("y", y(18) - 5)
+    .attr("text-anchor", "end")
     // .style("font-size", "16px")
     .attr("fill", "#adadad");
   svgLine
@@ -171,6 +172,36 @@ const agePlot = (data, size, margin) => {
     .attr("text-anchor", "end")
     // .style("font-size", "16px")
     .attr("fill", "#adadad");
+
+  svgLine
+    .append("svg:defs")
+    .append("svg:marker")
+    .attr("id", "triangle")
+    .attr("refX", 3)
+    .attr("refY", 3)
+    .attr("markerWidth", 6)
+    .attr("markerHeight", 6)
+    .attr("orient", "auto")
+    .append("path")
+    .attr("d", "M 6 3 0 6 0 0")
+    .attr("fill", "black");
+  svgLine.append("text").text("2/3rds of").attr("x", x2(200)).attr("y", y(33));
+  svgLine.append("text").text("Crime from").attr("x", x2(200)).attr("y", y(36));
+  svgLine
+    .append("text")
+    .text("18-23 y/o's")
+    .attr("x", x2(200))
+    .attr("y", y(39));
+  svgLine
+    .append("path")
+    .attr(
+      "d",
+      `M ${x2(600)} ${y(30)} Q ${x2(850)} ${y(27)}, ${x2(700)} ${y(23) + 5}`
+    )
+    .attr("marker-end", "url(#triangle)")
+    .attr("fill", "none")
+    .attr("stroke", "black")
+    .attr("stroke-width", "2px");
 
   const tooltip = plotArea
     .append("div")
@@ -279,7 +310,16 @@ const agePlot = (data, size, margin) => {
     .style("width", size.width1 - margin.left - margin.right + "px");
 
   legendarea.attr("height", 20).attr("width", size.width1);
-  ["Alcohol", "Partying", "Disorderly Conduct"].forEach((lab, i) => {
+  [
+    "Alcohol",
+    "Partying",
+    "Disorderly Conduct",
+    "Resisting Arrest",
+    "Fake ID",
+    "Drugs",
+    "Fighting",
+    "Theft",
+  ].forEach((lab, i) => {
     const item = legendarea
       .append("div")
       .style("display", "flex")

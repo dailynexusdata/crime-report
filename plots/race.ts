@@ -206,7 +206,7 @@ const racePlot = (
       bars
         .append("text")
         .text(group)
-        .attr("x", x(0) - 10)
+        .attr("x", x(0) - 5)
         .attr("y", y(i) - 15)
         .attr("text-anchor", "end")
         .style("font-size", "13pt")

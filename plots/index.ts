@@ -126,7 +126,7 @@ let ageData = null;
     };
 
     const margin: marginType = {
-      left: 20 + (window.innerWidth < 600 ? 0 : 160),
+      left: 25 + (window.innerWidth < 600 ? 0 : 160),
       right: 20,
       top: 40,
       bottom: 10,
@@ -145,7 +145,7 @@ let ageData = null;
     };
 
     const margin: marginType = {
-      left: 20 + (window.innerWidth < 600 ? 0 : 160),
+      left: 25 + (window.innerWidth < 600 ? 0 : 160),
       right: 20,
       top: 40,
       bottom: 10,
@@ -165,14 +165,14 @@ let ageData = null;
       .remove();
     if (window.innerWidth < 600) {
       const size = {
-        height1: 120,
-        height2: 300,
+        height1: 90,
+        height2: 320,
         width: width,
       };
       const margin: marginType = {
         left: 60,
         right: 30,
-        top: 15,
+        top: 35,
         bottom: 25,
       };
       agePlotVert(ageData, size, margin);
@@ -183,7 +183,7 @@ let ageData = null;
         width2: width * 0.2,
       };
       const margin: marginType = {
-        left: 50,
+        left: 55,
         right: 15,
         top: 40,
         bottom: 10,

@@ -36,17 +36,17 @@ const crimes = [
   "Disorderly Conduct",
   "Resisting arrest",
   "Fake ID",
-  "Abuse",
-  "Driving w/o License",
   "Drugs",
+  // "Driving w/o License",
+  // "Drugs",
   // "Failure to appear",
-  // "Fighting",
+  "Fighting",
   // "Illegal camping",
   // "Juvenile",
   // "License revoked",
   // "Property Damage",
   // "Public Nudity",
-  // "Robbery/Burglary/Theft",
+  "Robbery/Burglary/Theft",
   // "Trespassing",
 ];
 
@@ -114,7 +114,7 @@ const agePlot = (data, size, margin) => {
   const y1 = d3
     .scaleLinear()
     .domain([0, 1100])
-    .range([size.height1 - 30, margin.top + 15]);
+    .range([size.height1 - 5, margin.top - 5]);
 
   const x = d3
     .scaleLinear()
@@ -144,19 +144,19 @@ const agePlot = (data, size, margin) => {
         .ticks(5)
         .tickFormat((d) => Number(d * 100))
     );
-  svgLine
+  svgBars
     .append("text")
     .text("% of Total Crimes")
     .attr("x", x(18) - 46)
-    .attr("y", size.height1 - 5)
+    .attr("y", margin.top - 10)
     // .style("font-size", "16px")
     .attr("text-anchor", "start")
     .attr("fill", "#adadad");
   svgBars
     .append("text")
-    .text("Age")
-    .attr("x", x(66))
-    .attr("y", size.height2 - 10)
+    .text("Age:")
+    .attr("x", x(18) - 5)
+    .attr("y", size.height2 - 6)
     .attr("text-anchor", "end")
     // .style("font-size", "16px")
     .attr("fill", "#adadad");
@@ -174,74 +174,38 @@ const agePlot = (data, size, margin) => {
     .attr("text-anchor", "start")
     // .style("font-size", "16px")
     .attr("fill", "#adadad");
-
-  const tooltip = plotArea
-    .append("div")
-    .style("position", "absolute")
-    .append("div")
-    .style("position", "relative")
-    .style("background-color", "white")
-    .style("border", "1px solid black")
-    .style("border-radius", "5px")
-    .style("padding", "5px")
-    .style("width", "230px")
-    .style("display", "none");
-
-  plotArea.on("mouseenter", () => {
-    plotArea.selectAll("rect[class^='bar']").attr("fill-opacity", 1);
-    plotArea.on("mousemove", (event) => {
-      tooltip.style("display", "block");
-
-      //   tooltip.html(interactions[0].race);
-      const [xpos, ypos] = d3.pointer(event);
-
-      if (
-        ypos < margin.top ||
-        ypos > size.height - 4 ||
-        xpos < margin.left ||
-        xpos > size.width - margin.right
-      ) {
-        plotArea.selectAll("rect[class^='bar']").attr("fill-opacity", 1);
-        tooltip.style("display", "none");
-        return;
-      }
-
-      const idx = Math.min(Math.max(Math.round(y.invert(ypos)), 18), 65);
-      const [group, ttd] = Object.values(grouped)[idx - 18];
-
-      const tooltipData = Object.entries(ttd)
-        .sort(([_, [a, b]], [__, [c, d]]) => a - c)
-        .map(([group, [a, b]]) => {
-          return [group, b - a];
-        });
-      // .filter(([a, b]) => b > 0);
-
-      plotArea.selectAll("rect[class^='bar']").attr("fill-opacity", 0.1);
-      plotArea.selectAll(`.bar-${idx}`).attr("fill-opacity", 1);
-
-      tooltip.html(
-        `Age ${group}<hr>${tooltipData
-          .map(
-            ([grp, pct]) =>
-              `${grp}: ${
-                pct < 0.005 ? (pct === 0 ? 0 : "<1") : Math.round(pct * 100)
-              }%`
-          )
-          .join("<br>")}`
-      );
-
-      const tooltipBox = tooltip.node().getBoundingClientRect();
-      const xval = tooltipAlignmentx(xpos, tooltipBox);
-      const yval = tooltipAlignmenty(ypos, tooltipBox);
-
-      tooltip.style("left", xval).style("top", yval);
-    });
-    plotArea.on("mouseleave", () => {
-      tooltip.style("display", "none");
-      // d3.selectAll("rect[class^='bar']").attr("fill-opacity", 0);
-      plotArea.selectAll("rect[class^='bar']").attr("fill-opacity", 1);
-    });
-  });
+  svgLine
+    .append("svg:defs")
+    .append("svg:marker")
+    .attr("id", "triangle")
+    .attr("refX", 3)
+    .attr("refY", 3)
+    .attr("markerWidth", 6)
+    .attr("markerHeight", 6)
+    .attr("orient", "auto")
+    .append("path")
+    .attr("d", "M 6 3 0 6 0 0")
+    .attr("fill", "black");
+  svgLine
+    .append("text")
+    .text("2/3rds of Crime")
+    .attr("x", x(33))
+    .attr("y", y1(750));
+  svgLine
+    .append("text")
+    .text("between 18-23 y/o's")
+    .attr("x", x(33))
+    .attr("y", y1(750) + 15);
+  svgLine
+    .append("path")
+    .attr(
+      "d",
+      `M ${x(33) - 5} ${y1(700)} Q ${x(29)} ${y1(1100)}, ${x(24)} ${y1(600)}`
+    )
+    .attr("marker-end", "url(#triangle)")
+    .attr("fill", "none")
+    .attr("stroke", "black")
+    .attr("stroke-width", "2px");
 
   const grays = d3.scaleSequential(d3.interpolateGreys).domain([5, -5]);
 
@@ -286,7 +250,16 @@ const agePlot = (data, size, margin) => {
     .style("width", size.width - margin.left - margin.right + "px");
 
   legendarea.attr("height", 20).attr("width", size.width1);
-  ["Alcohol", "Partying", "Disorderly Conduct"].forEach((lab, i) => {
+  [
+    "Alcohol",
+    "Partying",
+    "Disorderly Conduct",
+    "Resisting Arrest",
+    "Fake ID",
+    "Drugs",
+    "Fighting",
+    "Theft",
+  ].forEach((lab, i) => {
     const item = legendarea
       .append("div")
       .style("display", "flex")
