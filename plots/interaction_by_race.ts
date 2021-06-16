@@ -198,13 +198,13 @@ const interactionByRacePlot = (
           // color[i] + ((group === "Black" && i === 0) || i !== 0 ? "" : "88")
         );
 
-      if (group === "Black" && i === 0) {
+      if ((group === "Black" || group === "Unknown") && i === 0) {
         lab
           .append("text")
           .attr("x", x(int.val) + 5)
           .attr("y", y(j) - (collapsed ? 10 - 2 : 15))
           .text(`${Math.round(int.val * 100)}%`)
-          .attr("fill", "#005AA3")
+          .attr("fill", group === "Black" && i === 0 ? "#005AA3" : color[i])
           .attr("text-anchor", "start")
           .attr("font-weight", "bold")
           .attr("alignment-baseline", "middle");
