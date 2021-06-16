@@ -53,14 +53,14 @@ const crimes = [
 
 const agePlot = (data, size, margin) => {
   const tooltipAlignmentx = (x, tooltipBox) => {
-    return Math.min(size.width1 - tooltipBox.width, x) + "px";
+    return Math.min(size.width1 - tooltipBox.width, x + 5) + "px";
   };
 
   const tooltipAlignmenty = (y, tooltipBox) => {
     if (y > size.height / 2) {
       return y - tooltipBox.height - 60 + "px";
     }
-    return Math.min(y - 40, size.height) + "px";
+    return Math.min(y - 35, size.height) + "px";
   };
   const grouped = Object.entries(groupByAge(data)).map(([age, data]) => {
     let nAgeGroup = 0;
