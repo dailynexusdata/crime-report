@@ -1,6 +1,8 @@
 import interactionByRacePlot from "./interaction_by_race";
 import arrestType from "./arrtype";
 import racePlot from "./race";
+import agePlot from "./age_wide";
+import agePlotVert from "./age_vert";
 import * as d3 from "d3";
 
 interface irDataType {
@@ -96,12 +98,13 @@ const groupArrTypeData = (data: arrTypeDataType) => {
 let irData = null;
 let arrData = null;
 let raceData = null;
+let ageData = null;
 
 (() => {
   const resizeArrType = () => {
     const size = {
       height: 300 * (window.innerWidth < 600 ? 1.6 : 1),
-      width: Math.max(Math.min(600, window.innerWidth), 300),
+      width: Math.max(Math.min(600, window.innerWidth), 270),
     };
 
     const margin: marginType = {
@@ -119,7 +122,7 @@ let raceData = null;
   const resizeIR = () => {
     const size = {
       height: 300,
-      width: Math.max(Math.min(600, window.innerWidth), 300),
+      width: Math.max(Math.min(600, window.innerWidth), 270),
     };
 
     const margin: marginType = {
@@ -138,7 +141,7 @@ let raceData = null;
   const resizeRacePlot = () => {
     const size = {
       height: 300,
-      width: Math.max(Math.min(600, window.innerWidth), 300),
+      width: Math.max(Math.min(600, window.innerWidth), 270),
     };
 
     const margin: marginType = {
@@ -152,6 +155,41 @@ let raceData = null;
       .selectAll("*")
       .remove();
     racePlot(raceData, size, margin, window.innerWidth < 600);
+  };
+  const resizeAgePlot = () => {
+    const width = Math.max(Math.min(600, window.innerWidth), 270);
+
+    d3.select("#age")
+      .style("width", width + "px")
+      .selectAll("*")
+      .remove();
+    if (window.innerWidth < 600) {
+      const size = {
+        height1: 120,
+        height2: 300,
+        width: width,
+      };
+      const margin: marginType = {
+        left: 60,
+        right: 30,
+        top: 15,
+        bottom: 25,
+      };
+      agePlotVert(ageData, size, margin);
+    } else {
+      const size = {
+        height: 300,
+        width1: width * 0.8,
+        width2: width * 0.2,
+      };
+      const margin: marginType = {
+        left: 50,
+        right: 15,
+        top: 40,
+        bottom: 10,
+      };
+      agePlot(ageData, size, margin);
+    }
   };
   window.addEventListener("resize", () => {
     resizeIR();
@@ -178,7 +216,11 @@ let raceData = null;
   ).then((data) => {
     raceData = data;
     resizeRacePlot();
-
-    console.log(Object.values(data).reduce((a, { pct }) => a + pct, 0));
+  });
+  d3.csv(
+    "https://raw.githubusercontent.com/dailynexusdata/crime-report/main/dist/data/age.csv"
+  ).then((data) => {
+    ageData = data;
+    resizeAgePlot();
   });
 })();

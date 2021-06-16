@@ -27,15 +27,24 @@ const arrestType = (
   collapsed: boolean
 ) => {
   const tooltipAlignmentx = (x, tooltipBox) => {
+    if (collapsed) {
+      return size.width / 2;
+    }
     return (
       Math.min(
-        size.width - margin.left - tooltipBox.width - (collapsed ? 30 : 10),
-        x - margin.left + (collapsed ? -15 : 10)
+        size.width - margin.left - tooltipBox.width - 10,
+        x - margin.left + 10
       ) + "px"
     );
   };
 
   const tooltipAlignmenty = (y, tooltipBox) => {
+    if (collapsed) {
+      return y + 10 + "px";
+    }
+    if (y > size.height / 2) {
+      return y - tooltipBox.height - 10 + "px";
+    }
     return Math.max(0, y) + "px";
   };
   const container = d3
@@ -258,7 +267,7 @@ const arrestType = (
     .attr("x", collapsed ? size.width - margin.right : x(lastViolx) + 150)
     .attr("y", y(lastViolIdx) - (collapsed ? 3 : 6) + 30)
     .text("Violent Crimes make up")
-    .attr("font-size", "20px")
+    .attr("font-size", collapsed ? "16px" : "20px")
     .attr("font-weight", "bold")
     .attr("text-anchor", collapsed ? "end" : "start")
     .attr("alignment-baseline", "middle")
@@ -269,7 +278,7 @@ const arrestType = (
     .attr("y", y(lastViolIdx) - (collapsed ? 3 : 6) + 50)
     .attr("text-anchor", collapsed ? "end" : "start")
     .text("less than _% of all crimes.")
-    .attr("font-size", "20px")
+    .attr("font-size", collapsed ? "16px" : "20px")
     .attr("font-weight", "bold")
     .attr("alignment-baseline", "middle")
     .attr("fill", "#9FCBE4");

@@ -26,6 +26,9 @@ const interactionByRacePlot = (
   const color = ["#AFDBF4", "#d3d3d344", "#d3d3d377"];
 
   const tooltipAlignmentx = (x, tooltipBox) => {
+    if (collapsed) {
+      return size.width / 2;
+    }
     return (
       Math.min(
         size.width - margin.left - tooltipBox.width - (collapsed ? 55 : 35),
@@ -35,6 +38,12 @@ const interactionByRacePlot = (
   };
 
   const tooltipAlignmenty = (y, tooltipBox) => {
+    if (collapsed) {
+      return y + 10 + "px";
+    }
+    if (y > size.height / 2) {
+      return y - tooltipBox.height - 10 + "px";
+    }
     return Math.max(60, y) + "px";
   };
   const container = d3
@@ -65,7 +74,8 @@ const interactionByRacePlot = (
     .style("display", "flex")
     .style("justify-content", "space-evenly")
     .style("margin-bottom", "5px")
-    .style("height", "20px")
+    .style("flex-wrap", "wrap")
+    .style("min-height", "20px")
     .style("margin-left", margin.left - margin.right + "px")
     .style("width", size.width - margin.left - margin.right + "px");
 
@@ -107,7 +117,7 @@ const interactionByRacePlot = (
     legendarea
       .append("p")
       .text(lab)
-      .style("margin", 0)
+      .style("margin", "3px")
       .style("padding", "2px 5px")
       .attr("text-anchor", "middle")
       .style("background-color", color[i] + (i !== 0 ? "" : "88"))
