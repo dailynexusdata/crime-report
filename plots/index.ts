@@ -211,8 +211,8 @@ let ageData = null;
     resizeIR();
   });
 
-  d3.json(
-    "https://raw.githubusercontent.com/dailynexusdata/crime-report/main/dist/data/race.json"
+  d3.csv(
+    "https://raw.githubusercontent.com/dailynexusdata/crime-report/main/dist/data/race.csv"
   ).then((data) => {
     raceData = data;
     resizeRacePlot();

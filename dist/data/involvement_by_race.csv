@@ -8,15 +8,12 @@
 "7","Hispanic/Mexican/Latin","ARR",254
 "8","Hispanic/Mexican/Latin","CIT",772
 "9","Hispanic/Mexican/Latin","DFC",177
-"10","Other","ARR",40
-"11","Other","CIT",263
-"12","Other","DFC",47
+"10","Other","ARR",49
+"11","Other","CIT",338
+"12","Other","DFC",58
 "13","Pacific Islander","ARR",4
 "14","Pacific Islander","CIT",13
 "15","Pacific Islander","DFC",2
-"16","Unknown","ARR",9
-"17","Unknown","CIT",75
-"18","Unknown","DFC",11
-"19","White","ARR",618
-"20","White","CIT",3362
-"21","White","DFC",504
+"16","White","ARR",618
+"17","White","CIT",3362
+"18","White","DFC",504

@@ -276,7 +276,7 @@ race.groups <- data.frame(
          "White", "Other", "Unknown", "Hispanic/Mexican/Latin", 
          "Black", "American Indian/Alaska"),
   race.group=c(rep("Asian",6), rep("Pacific Islander", 5),
-         "White", "Other", "Unknown", "Hispanic/Mexican/Latin", 
+         "White", "Other", "Other", "Hispanic/Mexican/Latin", 
          "Black", "American Indian/Alaska")
 )
 ```
@@ -308,6 +308,37 @@ arrests %>%
   group_by(race.group) %>%
   summarise(pct = n() / tot[1] * 100)
 ```
+
+```{r}
+dat <- read.csv("../rawdata/arrestInfo.csv")
+
+dat %>%
+  mutate(dob = as.Date(DOB, "%m/%d/%Y"), date = as.Date(Arrrest.Date, "%m/%d/%Y")) %>%
+  mutate(Age = floor(lubridate::interval(dob, date) / years(1))) %>%
+  group_by(Age) %>%
+  count() %>%
+  ungroup() %>%
+  filter(Age >= 18) %>%
+  mutate(cat = ifelse(Age <= 23, 1, 0)) %>%
+  group_by(cat) %>%
+  summarise(tot = sum(n)) %>%
+  mutate(pct = tot / sum(tot) * 100)
+```
+
+
+```{r}
+arrests %>%
+  group_by(real.age) %>%
+  count() %>%
+  ungroup() %>%
+  filter(real.age >= 18) %>%
+  mutate(cat = ifelse(real.age <= 23, 1, 0)) %>%
+  group_by(cat) %>%
+  summarise(tot = sum(n)) %>%
+  mutate(pct = tot / sum(tot) * 100)
+
+```
+
 
 ```{r}
 arrests.names %>%
@@ -404,7 +435,7 @@ arrType <- arrests %>%
   drop_na() %>%
   mutate(pct = n / sum(n))
 
-left_join(
+viol.crime <- left_join(
   arrType,
   arrType %>%
     group_by(group) %>%
@@ -413,8 +444,17 @@ left_join(
 )  %>%
   filter(tot >= 10) %>%
   select(-tot) %>%
-  arrange(group, desc(n)) %>%
+  arrange(group, desc(n))
+
+
+viol.crime %>%
+  group_by(viol) %>%
+  summarise(tot = sum(n)) %>%
+  mutate(pct = tot / sum(tot) * 100)
+
+viol.crime %>%
   write.csv("../dist/data/arrType.csv")
+
 
  %>%
   head(10)%>%
@@ -450,8 +490,12 @@ arrests %>%
   group_by(race.group) %>%
   count() %>%
   ungroup() %>%
-  mutate(pct = n / sum(n) * 100)
+  mutate(pct = n / sum(n)) %>%
   drop_na() %>%
+  select(race=race.group, tot=n, pct=pct) %>%
+  mutate(exp = c(0.214, 0.033, 0.241,0, 0, 0.569)) %>%
+  write.csv("../dist/data/race.csv")
+  
 ```
 
 ```{r}
