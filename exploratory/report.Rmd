@@ -197,14 +197,14 @@ charges <- cbind(charges,   group=c(
     "Drugs",
     "Resisting arrest",
     "Violation of Court Order",
-    "Homicide",
+    "Fighting",
     "Kidnapping",
     "Robbery/Burglary/Theft",
     "Propery Damage",
     "Fighting",
     "Fighting",
     "Abuse",
-    "Assult w/ Deadly Weapon",
+    "Fighting",
     "Rape",
     "Abuse",
     "Abuse",
@@ -221,7 +221,7 @@ charges <- cbind(charges,   group=c(
     "Defrauding an Innkeeper",
     "Property Damage",
     "Cruelty to animals",
-    "Trespassing",
+    "Robbery/Burglary/Theft",
     "Misuse of telephone",
     "Attempt (any crime)",
     "Probable cause to arrest",
@@ -233,8 +233,8 @@ charges <- cbind(charges,   group=c(
     "Hit and run",
     "Speeding",
     "Reckless Driving",
-    "DUI",
-    "DUI",
+    "Alcohol",
+    "Drugs",
     "Non-current registration",
     "Failure to appear",
     "Possession of marijuana",
@@ -282,12 +282,15 @@ race.groups <- data.frame(
 ```
 
 ```{r}
-arrests <- read.csv("../data/arrestInfo.csv") %>%
+library(lubridate)
+getwd()
+arrests <- read.csv("../rawdata/arrestInfo.csv") %>%
   mutate(dob = as.Date(DOB, "%m/%d/%Y"), date = as.Date(Arrrest.Date, "%m/%d/%Y")) %>%
+  mutate(real.age = floor(lubridate::interval(dob, date) / years(1))) %>%
   left_join(race.groups, by=c("Race"="orig")) %>%
   left_join(charges, by=c("Charge"="code"))
 
-arrests.names <- read.csv("../data/adults_with_names.csv") %>%
+arrests.names <- read.csv("../rawdata/adults_with_names.csv") %>%
   mutate(dob = as.Date(dob, "%m/%d/%Y"), date = as.Date(date, "%m/%d/%Y")) %>%
   left_join(race.groups, by=c("Race"="orig")) %>%
   left_join(charges, by=c("Charge"="code"))
@@ -368,7 +371,7 @@ arrests %>%
   ) %>%
   drop_na() %>%
   select(race=race.group, inv=Involvement, val=tot) %>%
-  write.csv("involvement_by_race.csv")
+  write.csv("../dist/data/involvement_by_race.csv")
 
 
 %>%
@@ -379,6 +382,14 @@ arrests %>%
     ) +
     scale_fill_manual("legend", values=c("ARR"="lightblue", "CIT"="gray", DFC="lightgray", "ARR1"="red"))
 ```
+```{r}
+arrests %>%
+  group_by(group, desc) %>%
+  summarise(n = n()) %>%
+  ungroup() %>%
+  pull(group) %>%
+  unique
+```
 
 
 ```{r}
@@ -387,7 +398,7 @@ arrType <- arrests %>%
   summarise(n = n()) %>%
   ungroup() %>%
   mutate(
-    viol = ifelse(group %in% c("Resisting arrest", "Fighting", "Robbery/Burglary/Theft"), 1, 0)
+    viol = ifelse(group %in% c("Resisting arrest", "Fighting", "Robbery/Burglary/Theft", "Abuse"), 1, 0)
   ) %>%
   arrange(group, desc(n)) %>% 
   drop_na() %>%
@@ -441,5 +452,15 @@ arrests %>%
   ungroup() %>%
   mutate(pct = n / sum(n) * 100)
   drop_na() %>%
+```
+
+```{r}
+arrests %>%
+  filter(real.age >= 18) %>%
+  group_by(real.age, group) %>%
+  summarise(n = n()) %>%
+  select(age = real.age, n, group) %>%
+  drop_na() %>%
+  write.csv("../dist/data/age.csv")
 ```
 

@@ -1,5 +1,5 @@
 "","group","desc","n","viol","pct"
-"1","Abuse","Domestic Abuse",30,0,0.00680889695869269
+"1","Abuse","Domestic Abuse",30,1,0.00680889695869269
 "2","Alcohol","Open Container - County",1440,0,0.326827054017249
 "3","Alcohol","Minor in possession",778,0,0.176577394462097
 "4","Alcohol","Drunk in Public",312,0,0.070812528370404
@@ -23,3 +23,4 @@
 "22","Robbery/Burglary/Theft","Burglary",22,1,0.00499319110304131
 "23","Robbery/Burglary/Theft","Petty Theft",22,1,0.00499319110304131
 "24","Robbery/Burglary/Theft","Robbery",15,1,0.00340444847934635
+"25","Robbery/Burglary/Theft","Trespassing",4,1,0.000907852927825692

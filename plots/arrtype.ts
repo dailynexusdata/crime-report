@@ -277,7 +277,7 @@ const arrestType = (
     .attr("x", collapsed ? size.width - margin.right : x(lastViolx) + 150)
     .attr("y", y(lastViolIdx) - (collapsed ? 3 : 6) + 50)
     .attr("text-anchor", collapsed ? "end" : "start")
-    .text("less than _% of all crimes.")
+    .text("6% of all crimes.")
     .attr("font-size", collapsed ? "16px" : "20px")
     .attr("font-weight", "bold")
     .attr("alignment-baseline", "middle")

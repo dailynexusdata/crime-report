@@ -185,7 +185,7 @@ const agePlot = (data, size, margin) => {
     .append("path")
     .attr("d", "M 6 3 0 6 0 0")
     .attr("fill", "black");
-  svgLine.append("text").text("2/3rds of").attr("x", x2(200)).attr("y", y(33));
+  svgLine.append("text").text("84% of").attr("x", x2(200)).attr("y", y(33));
   svgLine.append("text").text("Crime from").attr("x", x2(200)).attr("y", y(36));
   svgLine
     .append("text")
