@@ -53,7 +53,7 @@ const racePlot = (
   container
     .append("h2")
     .text("Crimes by Race")
-    .style("margin", "10px 0 0 10px");
+    .style("margin", "10px 10px 0 10px");
 
   const plotArea = container
     .append("div")
@@ -292,7 +292,9 @@ const racePlot = (
       "font-family",
       "Baskerville,Baskerville Old Face,Hoefler Text,Garamond,Times New Roman,serif"
     )
-    .text("Source: IVASPDKSAPD. Raw race groups aggregated into these groups.")
+    .text(
+      "Source: Isla Vista Foot Patrol Adult Arrest Info from 2013, 2018-2020."
+    )
     .style("margin", "0 10px")
     .append("hr");
 };

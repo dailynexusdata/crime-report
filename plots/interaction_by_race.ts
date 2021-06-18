@@ -54,8 +54,12 @@ const interactionByRacePlot = (
     );
   container
     .append("h2")
-    .text("Police Involvement by Race")
-    .style("margin", "10px 0 0 10px");
+    .text("Type of Police Involvement by Race")
+    .style("margin", "10px 10px 0 10px");
+  container
+    .append("p")
+    .text("Black people have the highest arrest rate of all races.")
+    .style("margin", "0 10px 0 10px");
   // container
   //   .append("p")
   //   .text("Crimes from 2013, 2018 and 2019.")
@@ -246,7 +250,9 @@ const interactionByRacePlot = (
       "font-family",
       "Baskerville,Baskerville Old Face,Hoefler Text,Garamond,Times New Roman,serif"
     )
-    .text("Source: IVASPDKSAPD. Raw race groups aggregated into these groups.")
+    .text(
+      "Source: Isla Vista Foot Patrol Adult Arrest Info from 2013, 2018-2020."
+    )
     .style("margin", "0 10px")
     .append("hr");
 };

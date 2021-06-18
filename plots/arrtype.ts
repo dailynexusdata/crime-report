@@ -55,8 +55,8 @@ const arrestType = (
     );
   container
     .append("h2")
-    .text("Types of Crimes")
-    .style("margin", "10px 0 0 10px");
+    .text("Violent Crimes Make 6% of All Crimes in IV")
+    .style("margin", "10px 10px 0 10px");
 
   const plotArea = container
     .append("div")
@@ -262,33 +262,35 @@ const arrestType = (
         .attr("font-weight", "bold");
     }
   });
-  labels
-    .append("text")
-    .attr("x", collapsed ? size.width - margin.right : x(lastViolx) + 150)
-    .attr("y", y(lastViolIdx) - (collapsed ? 3 : 6) + 30)
-    .text("Violent Crimes make up")
-    .attr("font-size", collapsed ? "16px" : "20px")
-    .attr("font-weight", "bold")
-    .attr("text-anchor", collapsed ? "end" : "start")
-    .attr("alignment-baseline", "middle")
-    .attr("fill", "#005AA3");
-  labels
-    .append("text")
-    .attr("x", collapsed ? size.width - margin.right : x(lastViolx) + 150)
-    .attr("y", y(lastViolIdx) - (collapsed ? 3 : 6) + 50)
-    .attr("text-anchor", collapsed ? "end" : "start")
-    .text("6% of all crimes.")
-    .attr("font-size", collapsed ? "16px" : "20px")
-    .attr("font-weight", "bold")
-    .attr("alignment-baseline", "middle")
-    .attr("fill", "#005AA3");
+  // labels
+  //   .append("text")
+  //   .attr("x", collapsed ? size.width - margin.right : x(lastViolx) + 150)
+  //   .attr("y", y(lastViolIdx) - (collapsed ? 3 : 6) + 30)
+  //   .text("Violent Crimes make up")
+  //   .attr("font-size", collapsed ? "16px" : "20px")
+  //   .attr("font-weight", "bold")
+  //   .attr("text-anchor", collapsed ? "end" : "start")
+  //   .attr("alignment-baseline", "middle")
+  //   .attr("fill", "#005AA3");
+  // labels
+  //   .append("text")
+  //   .attr("x", collapsed ? size.width - margin.right : x(lastViolx) + 150)
+  //   .attr("y", y(lastViolIdx) - (collapsed ? 3 : 6) + 50)
+  //   .attr("text-anchor", collapsed ? "end" : "start")
+  //   .text("6% of all crimes.")
+  //   .attr("font-size", collapsed ? "16px" : "20px")
+  //   .attr("font-weight", "bold")
+  //   .attr("alignment-baseline", "middle")
+  //   .attr("fill", "#005AA3");
   container
     .append("p")
     .style(
       "font-family",
       "Baskerville,Baskerville Old Face,Hoefler Text,Garamond,Times New Roman,serif"
     )
-    .text("Source: IVASPDKSAPD. Raw race groups aggregated into these groups.")
+    .text(
+      "Source: Isla Vista Foot Patrol Adult Arrest Info from 2013, 2018-2020."
+    )
     .style("margin", "0 10px")
     .append("hr");
 };

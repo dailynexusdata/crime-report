@@ -97,7 +97,16 @@ const agePlot = (data, size, margin) => {
       "font-family",
       "Baskerville,Baskerville Old Face,Hoefler Text,Garamond,Times New Roman,serif"
     );
-  container.append("h2").text("Crimes by Age").style("margin", "10px 0 0 10px");
+  container
+    .append("h2")
+    .text("Types of Crimes by Age")
+    .style("margin", "10px 10px 0 10px");
+  container
+    .append("p")
+    .text(
+      "College aged residents make up the majority of crime and are responsible for the majority of the partying and disorderly conduct related arrests."
+    )
+    .style("margin", "0 10px 0 10px");
 
   const plotArea = container
     .append("div")
@@ -384,7 +393,9 @@ const agePlot = (data, size, margin) => {
       "font-family",
       "Baskerville,Baskerville Old Face,Hoefler Text,Garamond,Times New Roman,serif"
     )
-    .text("Source: IVASPDKSAPD. Raw race groups aggregated into these groups.")
+    .text(
+      "Source: Isla Vista Foot Patrol Adult Arrest Info from 2013, 2018-2020."
+    )
     .style("margin", "0 10px")
     .append("hr");
 };
