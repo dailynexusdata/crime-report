@@ -80,7 +80,7 @@ const arrestType = (
 
   const y = d3
     .scaleLinear()
-    .domain([0, 10])
+    .domain([0, 9])
     .range([size.height - margin.bottom, margin.top]);
 
   const x = d3
@@ -187,81 +187,83 @@ const arrestType = (
   let viol = 0;
   let lastViolIdx = 0;
   let lastViolx = 0;
-  Object.entries(data).forEach(([group, crimes], j) => {
-    let currx = 0;
+  Object.entries(data)
+    .slice(1, 11)
+    .forEach(([group, crimes], j) => {
+      let currx = 0;
 
-    // console.log(group);
-    crimes.forEach((crime, i) => {
-      // console.log({
-      //   group,
-      //   currx,
-      //   inval: int["val"],
-      //   a1: x(currx),
-      //   a2: x(int.val),
-      // });
-      viol = crime.viol;
-      if (crime.viol === 1) {
-        lastViolIdx = j;
+      // console.log(group);
+      crimes.forEach((crime, i) => {
+        // console.log({
+        //   group,
+        //   currx,
+        //   inval: int["val"],
+        //   a1: x(currx),
+        //   a2: x(int.val),
+        // });
+        viol = crime.viol;
+        if (crime.viol === 1) {
+          lastViolIdx = j;
+        }
+        bars
+          .append("rect")
+          .attr("class", `bar-${group.split(/[ /]/)[0]}`)
+          .attr("x", x(currx))
+          .attr("y", y(j) - (collapsed ? 0 : 18))
+          .attr("height", collapsed ? 18 : 18)
+          .attr("width", x(crime.pct) - margin.left)
+          .attr("fill", grays(i))
+          .attr("fill-opacity", 0);
+
+        //   if (group === "Black" && i === 0) {
+        //     bars
+        //       .append("text")
+        //       .attr("x", x(int.val) + 5)
+        //       .attr("y", y(j) - (collapsed ? 10 - 2 : 15))
+        //       .text(`${Math.round(int.val * 100)}%`)
+        //       .attr("text-anchor", "start")
+        //       .attr("alignment-baseline", "middle");
+        //   }
+        currx += crime.pct;
+      });
+
+      if (collapsed) {
+        bars
+          .append("text")
+          .text(group)
+          .attr("x", x(0))
+          .attr("y", y(j) - 3)
+          .attr("text-anchor", "start");
+      } else {
+        bars
+          .append("text")
+          .text(group)
+          .attr("x", x(0) - 10)
+          .attr("y", y(j) - 9)
+          .attr("text-anchor", "end")
+          .attr("alignment-baseline", "middle");
       }
-      bars
+      overlap
         .append("rect")
-        .attr("class", `bar-${group.split(/[ /]/)[0]}`)
-        .attr("x", x(currx))
+        .attr("x", x(0))
         .attr("y", y(j) - (collapsed ? 0 : 18))
         .attr("height", collapsed ? 18 : 18)
-        .attr("width", x(crime.pct) - margin.left)
-        .attr("fill", grays(i))
-        .attr("fill-opacity", 0);
+        .attr("width", x(currx) - margin.left)
+        .attr("fill", viol ? "#005AA3" : "#d3d3d399");
 
-      //   if (group === "Black" && i === 0) {
-      //     bars
-      //       .append("text")
-      //       .attr("x", x(int.val) + 5)
-      //       .attr("y", y(j) - (collapsed ? 10 - 2 : 15))
-      //       .text(`${Math.round(int.val * 100)}%`)
-      //       .attr("text-anchor", "start")
-      //       .attr("alignment-baseline", "middle");
-      //   }
-      currx += crime.pct;
+      if (viol === 1) {
+        lastViolx = currx;
+
+        labels
+          .append("text")
+          .text(`${Math.round(currx * 100)}%`)
+          .attr("x", x(currx) + 5)
+          .attr("y", y(j) - (collapsed ? -2 : 8))
+          .attr("alignment-baseline", collapsed ? "hanging" : "middle")
+          .attr("fill", "#005AA3")
+          .attr("font-weight", "bold");
+      }
     });
-
-    if (collapsed) {
-      bars
-        .append("text")
-        .text(group)
-        .attr("x", x(0))
-        .attr("y", y(j) - 3)
-        .attr("text-anchor", "start");
-    } else {
-      bars
-        .append("text")
-        .text(group)
-        .attr("x", x(0) - 10)
-        .attr("y", y(j) - 9)
-        .attr("text-anchor", "end")
-        .attr("alignment-baseline", "middle");
-    }
-    overlap
-      .append("rect")
-      .attr("x", x(0))
-      .attr("y", y(j) - (collapsed ? 0 : 18))
-      .attr("height", collapsed ? 18 : 18)
-      .attr("width", x(currx) - margin.left)
-      .attr("fill", viol ? "#005AA3" : "#d3d3d399");
-
-    if (viol === 1) {
-      lastViolx = currx;
-
-      labels
-        .append("text")
-        .text(`${Math.round(currx * 100)}%`)
-        .attr("x", x(currx) + 5)
-        .attr("y", y(j) - (collapsed ? -2 : 8))
-        .attr("alignment-baseline", collapsed ? "hanging" : "middle")
-        .attr("fill", "#005AA3")
-        .attr("font-weight", "bold");
-    }
-  });
   // labels
   //   .append("text")
   //   .attr("x", collapsed ? size.width - margin.right : x(lastViolx) + 150)
