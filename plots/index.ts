@@ -207,7 +207,7 @@ let ageData = null;
     "https://raw.githubusercontent.com/dailynexusdata/crime-report/main/dist/data/involvement_by_race.csv"
   ).then((data) => {
     irData = groupIRData(data as any);
-    console.log(data, irData);
+    // console.log(data, irData);
     resizeIR();
   });
   d3.csv(

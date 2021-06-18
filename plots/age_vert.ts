@@ -244,7 +244,7 @@ const agePlot = (data, size, margin) => {
       if (range[1] - range[0] === 0) {
         return;
       }
-      console.log(range, range[1] - range[0], y2(range[0]));
+      // console.log(range, range[1] - range[0], y2(range[0]));
       svgBars
         .append("rect")
         .attr("class", `bar-${age}`)

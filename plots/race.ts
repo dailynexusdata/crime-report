@@ -187,7 +187,7 @@ const racePlot = (
     //   a2: x(int.val),
     // });
 
-    console.log(group);
+    // console.log(group);
 
     bars
       .append("rect")
