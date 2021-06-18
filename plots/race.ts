@@ -293,7 +293,9 @@ const racePlot = (
       "Baskerville,Baskerville Old Face,Hoefler Text,Garamond,Times New Roman,serif"
     )
     .text(
-      "Source: Isla Vista Foot Patrol Adult Arrest Info from 2013, 2018-2020."
+      "Source: Isla Vista Foot Patrol Adult Arrest Info from 2013, 2018-2020." +
+        " " +
+        "Percentage estimates from U.S. Census Bureau population estimates."
     )
     .style("margin", "0 10px")
     .append("hr");
