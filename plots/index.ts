@@ -207,13 +207,16 @@ let ageData = null;
     "https://raw.githubusercontent.com/dailynexusdata/crime-report/main/dist/data/involvement_by_race.csv"
   ).then((data) => {
     irData = groupIRData(data as any);
-    delete irData["Other"];
+    console.log(data, irData);
     resizeIR();
   });
-
   d3.csv(
     "https://raw.githubusercontent.com/dailynexusdata/crime-report/main/dist/data/race.csv"
-  ).then((data) => {
+  ).then((dat) => {
+    const data = {};
+    dat.forEach(({ race, tot, pct, exp }) => {
+      data[race] = { tot, pct, exp };
+    });
     raceData = data;
     resizeRacePlot();
   });

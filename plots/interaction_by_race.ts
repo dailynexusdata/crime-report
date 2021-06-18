@@ -198,7 +198,7 @@ const interactionByRacePlot = (
           // color[i] + ((group === "Black" && i === 0) || i !== 0 ? "" : "88")
         );
 
-      if ((group === "Black" || group === "Unknown") && i === 0) {
+      if ((group === "Black" || group === "Other") && i === 0) {
         lab
           .append("text")
           .attr("x", x(int.val) + 5)

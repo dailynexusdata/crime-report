@@ -186,6 +186,9 @@ const racePlot = (
     //   a1: x(currPct),
     //   a2: x(int.val),
     // });
+
+    console.log(group);
+
     bars
       .append("rect")
       .attr("x", x(0))
@@ -213,7 +216,7 @@ const racePlot = (
         .attr("alignment-baseline", "middle");
     }
 
-    if (exp !== undefined && pct > 0.01) {
+    if (exp !== undefined && exp !== "0" && pct > 0.01) {
       bars
         .append("line")
         .attr("x1", x(exp))
