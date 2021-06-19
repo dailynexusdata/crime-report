@@ -296,6 +296,8 @@ arrests.names <- read.csv("../rawdata/adults_with_names.csv") %>%
   left_join(charges, by=c("Charge"="code"))
 ```
 
+
+
 ```{r}
 dim(arrests)
 dim(arrests.names)
@@ -349,6 +351,15 @@ arrests.names %>%
   ungroup() %>%
   filter(last == "MARSAW") # MARSAW, BRIGGS
 
+arrests %>%
+  group_by(DOB) %>%
+  summarise(race.group = first(na.omit(race.group)), n=n()) %>%
+  ungroup() %>%
+  group_by(race.group) %>%
+  count() %>%
+  ungroup() %>%
+  drop_na() %>%
+  mutate(pct = n / sum(n) * 100)
 # different dob, no race specified (p sure he's black but yeah)
 ```
 
@@ -364,6 +375,32 @@ arrests.names %>%
   mutate(tot = n()) %>%
   group_by(race.group) %>%
   summarise(pct = n() / tot[1] * 100, avg=mean(n), M=max(n))
+```
+
+```{r}
+r.arr <- arrests %>%
+  group_by(race.group, group) %>%
+  summarise(tot = n())
+
+r.arr
+
+chisq.test(r.arr$race.group, r.arr$tot)
+  
+
+r.arr %>%
+  group_by(race.group) %>%
+  summarise(group=group, tot=tot/sum(tot)) %>%
+  ggplot(aes(x = race.group, y = tot, fill=group))+
+    geom_bar(stat="identity") +
+    coord_flip()
+  
+  
+r.arr %>%
+  group_by(race.group) %>%
+  summarise(group=group, tot=tot/sum(tot)) %>%
+  ggplot(aes(x = group, y = tot, fill=race.group)) +
+    geom_bar(stat="identity") +
+    coord_flip()
 ```
 
 
@@ -424,7 +461,12 @@ arrests %>%
 
 
 ```{r}
+arrests %>%
+  group_by(Involvement) %>%
+  count()
+
 arrType <- arrests %>%
+  #filter(Involvement %in% c("ARR", "CIT")) %>%
   group_by(group, desc) %>%
   summarise(n = n()) %>%
   ungroup() %>%
@@ -432,8 +474,10 @@ arrType <- arrests %>%
     viol = ifelse(group %in% c("Resisting arrest", "Fighting", "Robbery/Burglary/Theft", "Abuse"), 1, 0)
   ) %>%
   arrange(group, desc(n)) %>% 
-  drop_na() %>%
+  #drop_na() %>%
   mutate(pct = n / sum(n))
+
+arrType 
 
 viol.crime <- left_join(
   arrType,
@@ -445,7 +489,6 @@ viol.crime <- left_join(
   filter(tot >= 10) %>%
   select(-tot) %>%
   arrange(group, desc(n))
-
 
 viol.crime %>%
   group_by(viol) %>%
@@ -485,7 +528,7 @@ arrests %>%
   count()
 ```
 ```{r}
-arrests %>%
+racearrests <- arrests %>%
   select(race.group) %>%
   group_by(race.group) %>%
   count() %>%
@@ -494,8 +537,9 @@ arrests %>%
   drop_na() %>%
   select(race=race.group, tot=n, pct=pct) %>%
   mutate(exp = c(0.214, 0.033, 0.241,0, 0, 0.569)) %>%
+  mutate(sum = exp/sum(pct))%>%
+  arrange(sum) %>%
   write.csv("../dist/data/race.csv")
-  
 ```
 
 ```{r}

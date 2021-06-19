@@ -159,7 +159,7 @@ const racePlot = (
         `${group}<hr># of Arrests: ${tooltipData.tot}<br>% of Arrests: ${
           tooltipData.pct < 0.01 ? "<1" : Math.round(tooltipData.pct * 100)
         }%` +
-          (tooltipData.exp > -1
+          (tooltipData.exp > -1 && group !== "Other"
             ? `<br> Expected: ${
                 tooltipData.exp < 0.01
                   ? "<1"

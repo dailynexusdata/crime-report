@@ -45,7 +45,7 @@ const arrestType = (
     if (y > size.height / 2) {
       return y - tooltipBox.height - 10 + "px";
     }
-    return Math.max(0, y) + "px";
+    return Math.max(0, y + 10) + "px";
   };
   const container = d3
     .select("#arrtype")
@@ -55,7 +55,7 @@ const arrestType = (
     );
   container
     .append("h2")
-    .text("Violent Crimes Make 6% of All Crimes in IV")
+    .text("Violent Crimes Make up 6% of All Crimes in IV")
     .style("margin", "10px 10px 0 10px");
 
   const plotArea = container
@@ -144,7 +144,7 @@ const arrestType = (
 
       if (
         ypos < margin.top - 20 ||
-        ypos > size.height - 10 ||
+        ypos > size.height + 10 ||
         xpos < margin.left ||
         xpos > size.width - margin.right
       ) {
@@ -152,7 +152,7 @@ const arrestType = (
         return;
       }
 
-      const idx = Math.min(Math.max(Math.round(y.invert(ypos)), 0), 11);
+      const idx = Math.min(Math.max(Math.ceil(y.invert(ypos)), 1), 11);
       const [group, tooltipData] = Object.entries(data)[idx];
 
       plotArea.selectAll("rect[class^='bar']").attr("fill-opacity", 0);

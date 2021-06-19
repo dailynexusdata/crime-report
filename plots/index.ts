@@ -211,6 +211,7 @@ let ageData = null;
     resizeIR();
   });
   d3.csv(
+    //"http://127.0.0.1:5501/dist/data/race.csv"
     "https://raw.githubusercontent.com/dailynexusdata/crime-report/main/dist/data/race.csv"
   ).then((dat) => {
     const data = {};
