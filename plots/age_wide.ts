@@ -31,25 +31,8 @@ const groupByAge = (data) => {
 
   return output;
 };
-const crimes = [
-  "Alcohol",
-  "Partying",
-  "Disorderly Conduct",
-  "Resisting arrest",
-  "Fake ID",
-  "Drugs",
-  // "Driving w/o License",
-  // "Drugs",
-  // "Failure to appear",
-  "Fighting",
-  // "Illegal camping",
-  // "Juvenile",
-  // "License revoked",
-  // "Property Damage",
-  // "Public Nudity",
-  "Robbery/Burglary/Theft",
-  // "Trespassing",
-];
+
+const crimes = ["Alcohol", "Partying", "Disorderly Conduct", "Other"];
 
 const agePlot = (data, size, margin) => {
   const tooltipAlignmentx = (x, tooltipBox) => {
@@ -58,9 +41,9 @@ const agePlot = (data, size, margin) => {
 
   const tooltipAlignmenty = (y, tooltipBox) => {
     if (y > size.height / 2) {
-      return y - tooltipBox.height - 60 + "px";
+      return y - tooltipBox.height - 90 + "px";
     }
-    return Math.min(y - 35, size.height) + "px";
+    return Math.min(y - 70, size.height) + "px";
   };
   const grouped = Object.entries(groupByAge(data)).map(([age, data]) => {
     let nAgeGroup = 0;
@@ -96,14 +79,17 @@ const agePlot = (data, size, margin) => {
     .style("font-family", "Helvetica Neue, Helvetica, Arial, sans-serif");
   container
     .append("h2")
-    .text("Types of Crimes by Age")
+    .text("Most Crimes are Committed by People College-Aged")
     .style("margin", "10px 10px 0 10px");
   container
     .append("p")
+    // .text(
+    //   "College aged residents make up the majority of crime and are responsible for the majority of the partying and disorderly conduct related arrests."
+    // )
     .text(
-      "College aged residents make up the majority of crime and are responsible for the majority of the partying and disorderly conduct related arrests."
+      'Showing the top 3 crime categories as listed in the "Violent Crimes Make up 6% of All Crimes in IV" plot with all other crimes classified as "Other".'
     )
-    .style("margin", "0 10px 0 10px");
+    .style("margin", "0 10px 5px 10px");
 
   const plotArea = container
     .append("div")
@@ -279,7 +265,7 @@ const agePlot = (data, size, margin) => {
     });
   });
 
-  const grays = d3.scaleSequential(d3.interpolateGreys).domain([5, -5]);
+  const grays = d3.scaleSequential(d3.interpolateGreys).domain([-5, 10]);
 
   const getColor = (i) => {
     if (i === 0) {
@@ -318,16 +304,7 @@ const agePlot = (data, size, margin) => {
     .style("width", size.width1 - margin.left - margin.right + "px");
 
   legendarea.attr("height", 20).attr("width", size.width1);
-  [
-    "Alcohol",
-    "Partying",
-    "Disorderly Conduct",
-    "Resisting Arrest",
-    "Fake ID",
-    "Drugs",
-    "Fighting",
-    "Theft",
-  ].forEach((lab, i) => {
+  crimes.forEach((lab, i) => {
     const item = legendarea
       .append("div")
       .style("display", "flex")
@@ -387,9 +364,7 @@ const agePlot = (data, size, margin) => {
   container
     .append("p")
     .style("font-family", "Helvetica Neue, Helvetica, Arial, sans-serif")
-    .text(
-      "Source: Isla Vista Foot Patrol Adult Arrest Info from 2013, 2018-2020."
-    )
+    .text("Data includes adult arrest info from 2013, 2018-2020. Source: IVFP.")
     .style("margin", "0 10px")
     .append("hr");
 };

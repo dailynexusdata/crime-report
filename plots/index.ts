@@ -196,7 +196,6 @@ let ageData = null;
     resizeArrType();
     resizeRacePlot();
     resizeAgePlot();
-    console.log("resize");
   });
 
   d3.csv(
@@ -213,8 +212,8 @@ let ageData = null;
   //   resizeIR();
   // });
   d3.csv(
-    // "dist/data/race.csv"
-    "https://raw.githubusercontent.com/dailynexusdata/crime-report/main/dist/data/race.csv"
+    "dist/data/race.csv"
+    // "https://raw.githubusercontent.com/dailynexusdata/crime-report/main/dist/data/race.csv"
   ).then((dat) => {
     const data = {};
     dat.forEach(({ race, tot, pct, exp }) => {
@@ -224,7 +223,8 @@ let ageData = null;
     resizeRacePlot();
   });
   d3.csv(
-    "https://raw.githubusercontent.com/dailynexusdata/crime-report/main/dist/data/age.csv"
+    "dist/data/age.csv"
+    // "https://raw.githubusercontent.com/dailynexusdata/crime-report/main/dist/data/age.csv"
   ).then((data) => {
     ageData = data;
     resizeAgePlot();

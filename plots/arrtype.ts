@@ -54,6 +54,12 @@ const arrestType = (
     .append("h2")
     .text("Violent Crimes Make up 6% of All Crimes in IV")
     .style("margin", "10px 10px 0 10px");
+  container
+    .append("p")
+    .text(
+      "Click on the bars to see which crimes are included in each categorie."
+    )
+    .style("margin", "0 10px 5px 10px");
 
   const plotArea = container
     .append("div")
@@ -148,8 +154,10 @@ const arrestType = (
         tooltip.style("display", "none");
         return;
       }
+      const idx = collapsed
+        ? Math.min(Math.max(Math.ceil(y.invert(ypos) + 0.5), 1), 11)
+        : Math.min(Math.max(Math.ceil(y.invert(ypos)), 1), 11);
 
-      const idx = Math.min(Math.max(Math.ceil(y.invert(ypos)), 1), 11);
       const [group, tooltipData] = Object.entries(data)[idx];
 
       plotArea.selectAll("rect[class^='bar']").attr("fill-opacity", 0);
@@ -263,9 +271,35 @@ const arrestType = (
     });
 
   labels
+    .append("svg:defs")
+    .append("svg:marker")
+    .attr("id", "triangle123")
+    .attr("refX", 3)
+    .attr("refY", 3)
+    .attr("markerWidth", 6)
+    .attr("markerHeight", 6)
+    .attr("orient", "auto")
+    .append("path")
+    .attr("d", "M 6 3 0 6 0 0")
+    .attr("fill", "#005AA3");
+
+  labels
+    .append("path")
+    .attr(
+      "d",
+      `M ${x(collapsed ? 0.29 : 0.28)} ${collapsed ? 220 : 160} Q ${x(
+        collapsed ? 0.27 : 0.23
+      )} ${collapsed ? 205 : 135}, ${x(0.1)} ${collapsed ? 205 : 135}`
+    )
+    .attr("marker-end", "url(#triangle123)")
+    .attr("fill", "none")
+    .attr("stroke", "#005AA3")
+    .attr("stroke-width", "2px");
+
+  labels
     .append("text")
     .text("Violent Crime")
-    .attr("x", x(collapsed ? 0.35 : 0.2))
+    .attr("x", x(collapsed ? 0.25 : 0.2))
     .attr("y", collapsed ? 240 : 180)
     .attr("fill", "#005AA3")
     .attr("font-weight", "bold");
@@ -292,9 +326,7 @@ const arrestType = (
   container
     .append("p")
     .style("font-family", "Helvetica Neue, Helvetica, Arial, sans-serif")
-    .text(
-      "Source: Isla Vista Foot Patrol Adult Arrest Info from 2013, 2018-2020."
-    )
+    .text("Data includes adult arrest info from 2013, 2018-2020. Source: IVFP.")
     .style("margin", "0 10px")
     .append("hr");
 };

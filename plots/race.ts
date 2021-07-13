@@ -30,7 +30,7 @@ const racePlot = (
     return (
       Math.min(
         size.width - margin.left - tooltipBox.width - (collapsed ? 55 : 35),
-        x - margin.left - (collapsed ? 40 : 20)
+        x - margin.left - (collapsed ? 30 : 10)
       ) + "px"
     );
   };
@@ -42,14 +42,14 @@ const racePlot = (
     if (y > size.height / 2) {
       return y - tooltipBox.height - 10 + "px";
     }
-    return Math.max(60, y) + "px";
+    return Math.max(60, y + 10) + "px";
   };
   const container = d3
     .select("#race")
     .style("font-family", "Helvetica Neue, Helvetica, Arial, sans-serif");
   container
     .append("h2")
-    .text("Crimes by Race")
+    .text("Isla Vista Crimes by Race")
     .style("margin", "10px 10px 0 10px");
 
   const plotArea = container
@@ -80,7 +80,8 @@ const racePlot = (
 
   const x = d3
     .scaleLinear()
-    .domain([0, 0.7])
+    .domain([0, 4000])
+    // .domain([0, 0.7])
     .range([margin.left, size.width - margin.right]);
 
   const bars = svg.append("g");
@@ -89,7 +90,7 @@ const racePlot = (
 
   svg
     .append("text")
-    .text("% of Total Crimes")
+    .text("# of Crimes")
     .attr("x", x(0))
     .attr("y", 15)
     // .style("font-size", "16px")
@@ -101,10 +102,8 @@ const racePlot = (
     .attr("transform", "translate(0, 40)")
     .attr("color", "#adadad")
     .call(
-      d3
-        .axisTop(x)
-        .ticks(5)
-        .tickFormat((d) => `${Math.round((d as number) * 100)}`)
+      d3.axisTop(x).ticks(5)
+      // .tickFormat((d) => `${Math.round((d as number) * 100)}`)
     );
 
   ["Over Represented", "Under Represented"].forEach((lab, i) => {
@@ -153,15 +152,9 @@ const racePlot = (
       ];
 
       tooltip.html(
-        `${group}<hr># of Arrests: ${tooltipData.tot}<br>% of Arrests: ${
-          tooltipData.pct < 0.01 ? "<1" : Math.round(tooltipData.pct * 100)
-        }%` +
+        `${group}<hr># of Crimes: ${d3.format(",")(tooltipData.tot)}` +
           (tooltipData.exp > -1 && group !== "Other"
-            ? `<br> Expected: ${
-                tooltipData.exp < 0.01
-                  ? "<1"
-                  : Math.round(tooltipData.exp * 100)
-              }%`
+            ? `<br> Expected: ${d3.format(",")(Math.round(tooltipData.exp))}`
             : "")
       );
 
@@ -185,14 +178,13 @@ const racePlot = (
     // });
 
     // console.log(group);
-
     bars
       .append("rect")
       .attr("x", x(0))
       .attr("y", y(i) - (collapsed ? 20 : 30))
       .attr("height", collapsed ? 20 : 30)
       .attr("width", x(pct) - margin.left)
-      .attr("fill", exp < pct ? "#AFDBF4" : "#d3d3d399");
+      .attr("fill", exp < pct && group !== "Unknown" ? "#AFDBF4" : "#d3d3d399");
 
     if (collapsed) {
       bars
@@ -252,10 +244,11 @@ const racePlot = (
     .append("path")
     .attr("d", "M 6 3 0 6 0 0")
     .attr("fill", "black");
+
   bars
     .append("text")
-    .text("Expected %")
-    .attr("x", x(0.37))
+    .text("Expected #")
+    .attr("x", x(2050))
     .attr("y", y(3.3))
     .attr("font-size", "18px")
     .attr("text-anchor", "start")
@@ -264,7 +257,7 @@ const racePlot = (
   bars
     .append("text")
     .text("from population.")
-    .attr("x", x(0.37))
+    .attr("x", x(2050))
     .attr("y", y(3.3) + 18)
     .attr("font-size", "18px")
     .attr("text-anchor", "start")
@@ -274,7 +267,7 @@ const racePlot = (
     .append("path")
     .attr(
       "d",
-      `M ${x(0.37) - 5} ${y(3.3)} Q ${x(0.28)} ${y(3)}, ${
+      `M ${x(2000)} ${y(3.3)} Q ${x(1700)} ${y(3)}, ${
         x(Object.values(data)[4].exp) + 6
       } ${y(4) + 10}`
     )
@@ -286,10 +279,12 @@ const racePlot = (
   container
     .append("p")
     .style("font-family", "Helvetica Neue, Helvetica, Arial, sans-serif")
-    .text(
-      "Source: Isla Vista Foot Patrol Adult Arrest Info from 2013, 2018-2020." +
-        " " +
-        "Percentage estimates from U.S. Census Bureau population estimates."
+    .html(
+      "Data includes adult arrest info from 2013, 2018-2020. Source: IVFP." +
+        "<br>" +
+        "Percentage estimates from U.S. Census Bureau population estimates." +
+        "<br><br>" +
+        "Note that the census records race and ethnicity separately, while IVFP combines the two, making the comparison between the two sources difficult."
     )
     .style("margin", "0 10px")
     .append("hr");
