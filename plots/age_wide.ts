@@ -93,10 +93,7 @@ const agePlot = (data, size, margin) => {
 
   const container = d3
     .select("#age")
-    .style(
-      "font-family",
-      "Baskerville,Baskerville Old Face,Hoefler Text,Garamond,Times New Roman,serif"
-    );
+    .style("font-family", "Helvetica Neue, Helvetica, Arial, sans-serif");
   container
     .append("h2")
     .text("Types of Crimes by Age")
@@ -224,9 +221,9 @@ const agePlot = (data, size, margin) => {
     .style("width", "230px")
     .style("display", "none");
 
-  plotArea.on("mouseenter", () => {
+  plotArea.on("mouseenter touchstart", () => {
     plotArea.selectAll("rect[class^='bar']").attr("fill-opacity", 1);
-    plotArea.on("mousemove", (event) => {
+    plotArea.on("mousemove touchstart", (event) => {
       tooltip.style("display", "block");
 
       //   tooltip.html(interactions[0].race);
@@ -389,10 +386,7 @@ const agePlot = (data, size, margin) => {
     .attr("fill", "#d3d3d3aa");
   container
     .append("p")
-    .style(
-      "font-family",
-      "Baskerville,Baskerville Old Face,Hoefler Text,Garamond,Times New Roman,serif"
-    )
+    .style("font-family", "Helvetica Neue, Helvetica, Arial, sans-serif")
     .text(
       "Source: Isla Vista Foot Patrol Adult Arrest Info from 2013, 2018-2020."
     )

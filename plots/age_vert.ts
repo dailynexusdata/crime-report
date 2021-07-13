@@ -92,10 +92,7 @@ const agePlot = (data, size, margin) => {
 
   const container = d3
     .select("#age")
-    .style(
-      "font-family",
-      "Baskerville,Baskerville Old Face,Hoefler Text,Garamond,Times New Roman,serif"
-    );
+    .style("font-family", "Helvetica Neue, Helvetica, Arial, sans-serif");
   container
     .append("h2")
     .text("Types of Crimes by Age")
@@ -251,7 +248,7 @@ const agePlot = (data, size, margin) => {
         .attr("y", y2(range[1]))
         .attr("height", y2(range[0]) - y2(range[1]))
         .attr("x", x(age))
-        .attr("width", 6)
+        .attr("width", (size.width - margin.left - margin.right) / 48)
         .attr("fill", getColor(i))
         .attr("fill-opacity", 1);
     });
@@ -305,7 +302,74 @@ const agePlot = (data, size, margin) => {
     .y((d) => {
       return y1(d[1]);
     });
+  const tooltip = plotArea
+    .append("div")
+    .style("position", "absolute")
+    .append("div")
+    .style("position", "relative")
+    .style("background-color", "white")
+    .style("border", "1px solid black")
+    .style("border-radius", "5px")
+    .style("padding", "5px")
+    .style("width", "230px")
+    .style("display", "none");
+  plotArea.on("mouseenter touchstart", () => {
+    plotArea.selectAll("rect[class^='bar']").attr("fill-opacity", 1);
+    plotArea.on("mousemove touchstart", (event) => {
+      tooltip.style("display", "block");
 
+      //   tooltip.html(interactions[0].race);
+      const [xpos, ypos] = d3.pointer(event);
+
+      if (
+        ypos < margin.top ||
+        ypos > size.height - 4 ||
+        xpos < margin.left ||
+        xpos > size.width - margin.right
+      ) {
+        plotArea.selectAll("rect[class^='bar']").attr("fill-opacity", 1);
+        tooltip.style("display", "none");
+        return;
+      }
+
+      const idx = Math.min(Math.max(Math.round(x.invert(xpos)), 18), 65);
+      const [group, ttd] = Object.values(grouped)[idx - 18];
+
+      const tooltipData = Object.entries(ttd)
+        .sort(([_, [a, b]], [__, [c, d]]) => a - c)
+        .map(([group, [a, b]]) => {
+          return [group, b - a];
+        });
+      // .filter(([a, b]) => b > 0);
+
+      plotArea.selectAll("rect[class^='bar']").attr("fill-opacity", 0.1);
+      plotArea.selectAll(`.bar-${idx}`).attr("fill-opacity", 1);
+
+      tooltip.html(
+        `Age ${group}<hr><b>Total # of Crimes: ${
+          collapsed[group]
+        }</b><br>${tooltipData
+          .map(
+            ([grp, pct]) =>
+              `${grp}: ${
+                pct < 0.005 ? (pct === 0 ? 0 : "<1") : Math.round(pct * 100)
+              }%`
+          )
+          .join("<br>")}`
+      );
+
+      const tooltipBox = tooltip.node().getBoundingClientRect();
+      const xval = tooltipAlignmentx(xpos, tooltipBox);
+      const yval = tooltipAlignmenty(ypos, tooltipBox);
+
+      tooltip.style("left", xval).style("top", yval);
+    });
+    plotArea.on("mouseleave touchend", () => {
+      tooltip.style("display", "none");
+      // d3.selectAll("rect[class^='bar']").attr("fill-opacity", 0);
+      plotArea.selectAll("rect[class^='bar']").attr("fill-opacity", 1);
+    });
+  });
   const area = d3
     .area()
     .x((d) => x(d[0]))
@@ -328,10 +392,7 @@ const agePlot = (data, size, margin) => {
     .attr("fill", "#d3d3d3aa");
   container
     .append("p")
-    .style(
-      "font-family",
-      "Baskerville,Baskerville Old Face,Hoefler Text,Garamond,Times New Roman,serif"
-    )
+    .style("font-family", "Helvetica Neue, Helvetica, Arial, sans-serif")
     .text(
       "Source: Isla Vista Foot Patrol Adult Arrest Info from 2013, 2018-2020."
     )

@@ -46,10 +46,7 @@ const racePlot = (
   };
   const container = d3
     .select("#race")
-    .style(
-      "font-family",
-      "Baskerville,Baskerville Old Face,Hoefler Text,Garamond,Times New Roman,serif"
-    );
+    .style("font-family", "Helvetica Neue, Helvetica, Arial, sans-serif");
   container
     .append("h2")
     .text("Crimes by Race")
@@ -132,8 +129,8 @@ const racePlot = (
     .style("width", "175px")
     .style("display", "none");
 
-  plotArea.on("mouseenter", () => {
-    plotArea.on("mousemove", (event) => {
+  plotArea.on("mouseenter touchstart", () => {
+    plotArea.on("mousemove touchstart", (event) => {
       tooltip.style("display", "block");
 
       //   tooltip.html(interactions[0].race);
@@ -173,7 +170,7 @@ const racePlot = (
         .style("left", tooltipAlignmentx(xpos, tooltipBox))
         .style("top", tooltipAlignmenty(ypos, tooltipBox));
     });
-    plotArea.on("mouseleave", () => {
+    plotArea.on("mouseleave touchend", () => {
       tooltip.style("display", "none");
     });
   });
@@ -257,22 +254,22 @@ const racePlot = (
     .attr("fill", "black");
   bars
     .append("text")
-    .text("Expected %" + (collapsed ? "" : " from population."))
+    .text("Expected %")
     .attr("x", x(0.37))
     .attr("y", y(3.3))
     .attr("font-size", "18px")
     .attr("text-anchor", "start")
     .attr("alignment-baseline", "middle");
-  if (collapsed) {
-    bars
-      .append("text")
-      .text("from population.")
-      .attr("x", x(0.37))
-      .attr("y", y(3.3) + 18)
-      .attr("font-size", "18px")
-      .attr("text-anchor", "start")
-      .attr("alignment-baseline", "middle");
-  }
+
+  bars
+    .append("text")
+    .text("from population.")
+    .attr("x", x(0.37))
+    .attr("y", y(3.3) + 18)
+    .attr("font-size", "18px")
+    .attr("text-anchor", "start")
+    .attr("alignment-baseline", "middle");
+
   bars
     .append("path")
     .attr(
@@ -288,10 +285,7 @@ const racePlot = (
 
   container
     .append("p")
-    .style(
-      "font-family",
-      "Baskerville,Baskerville Old Face,Hoefler Text,Garamond,Times New Roman,serif"
-    )
+    .style("font-family", "Helvetica Neue, Helvetica, Arial, sans-serif")
     .text(
       "Source: Isla Vista Foot Patrol Adult Arrest Info from 2013, 2018-2020." +
         " " +

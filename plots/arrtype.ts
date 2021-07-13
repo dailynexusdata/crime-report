@@ -49,10 +49,7 @@ const arrestType = (
   };
   const container = d3
     .select("#arrtype")
-    .style(
-      "font-family",
-      "Baskerville,Baskerville Old Face,Hoefler Text,Garamond,Times New Roman,serif"
-    );
+    .style("font-family", "Helvetica Neue, Helvetica, Arial, sans-serif");
   container
     .append("h2")
     .text("Violent Crimes Make up 6% of All Crimes in IV")
@@ -136,9 +133,9 @@ const arrestType = (
   const labels = svg.append("g");
   labels.style("display", "block");
 
-  plotArea.on("mouseenter", () => {
+  plotArea.on("mouseenter touchstart", () => {
     labels.style("display", "none");
-    plotArea.on("mousemove", (event) => {
+    plotArea.on("mousemove touchstart", (event) => {
       //   tooltip.html(interactions[0].race);
       const [xpos, ypos] = d3.pointer(event);
 
@@ -175,7 +172,7 @@ const arrestType = (
 
       tooltip.style("left", xval).style("top", yval).style("display", "block");
     });
-    plotArea.on("mouseleave", () => {
+    plotArea.on("mouseleave touchend", () => {
       labels.style("display", "block");
       tooltip.style("display", "none");
       plotArea.selectAll("rect[class^='bar']").attr("fill-opacity", 0);
@@ -264,6 +261,14 @@ const arrestType = (
           .attr("font-weight", "bold");
       }
     });
+
+  labels
+    .append("text")
+    .text("Violent Crime")
+    .attr("x", x(collapsed ? 0.35 : 0.2))
+    .attr("y", collapsed ? 240 : 180)
+    .attr("fill", "#005AA3")
+    .attr("font-weight", "bold");
   // labels
   //   .append("text")
   //   .attr("x", collapsed ? size.width - margin.right : x(lastViolx) + 150)
@@ -286,10 +291,7 @@ const arrestType = (
   //   .attr("fill", "#005AA3");
   container
     .append("p")
-    .style(
-      "font-family",
-      "Baskerville,Baskerville Old Face,Hoefler Text,Garamond,Times New Roman,serif"
-    )
+    .style("font-family", "Helvetica Neue, Helvetica, Arial, sans-serif")
     .text(
       "Source: Isla Vista Foot Patrol Adult Arrest Info from 2013, 2018-2020."
     )

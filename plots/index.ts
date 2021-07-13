@@ -1,4 +1,4 @@
-import interactionByRacePlot from "./interaction_by_race";
+// import interactionByRacePlot from "./interaction_by_race";
 import arrestType from "./arrtype";
 import racePlot from "./race";
 import agePlot from "./age_wide";
@@ -119,25 +119,25 @@ let ageData = null;
       .remove();
     arrestType(arrData, size, margin, window.innerWidth < 600);
   };
-  const resizeIR = () => {
-    const size = {
-      height: 300,
-      width: Math.max(Math.min(600, window.innerWidth), 270),
-    };
+  // const resizeIR = () => {
+  //   const size = {
+  //     height: 300,
+  //     width: Math.max(Math.min(600, window.innerWidth), 270),
+  //   };
 
-    const margin: marginType = {
-      left: 25 + (window.innerWidth < 600 ? 0 : 160),
-      right: 20,
-      top: 40,
-      bottom: 10,
-    };
+  //   const margin: marginType = {
+  //     left: 25 + (window.innerWidth < 600 ? 0 : 160),
+  //     right: 20,
+  //     top: 40,
+  //     bottom: 10,
+  //   };
 
-    d3.select("#interaction_by_race")
-      .style("width", size.width + "px")
-      .selectAll("*")
-      .remove();
-    interactionByRacePlot(irData, size, margin, window.innerWidth < 600);
-  };
+  //   d3.select("#interaction_by_race")
+  //     .style("width", size.width + "px")
+  //     .selectAll("*")
+  //     .remove();
+  //   interactionByRacePlot(irData, size, margin, window.innerWidth < 600);
+  // };
   const resizeRacePlot = () => {
     const size = {
       height: 300,
@@ -192,9 +192,11 @@ let ageData = null;
     }
   };
   window.addEventListener("resize", () => {
-    resizeIR();
+    // resizeIR();
     resizeArrType();
     resizeRacePlot();
+    resizeAgePlot();
+    console.log("resize");
   });
 
   d3.csv(
@@ -203,15 +205,15 @@ let ageData = null;
     arrData = groupArrTypeData(data as any);
     resizeArrType();
   });
+  // d3.csv(
+  //   "https://raw.githubusercontent.com/dailynexusdata/crime-report/main/dist/data/involvement_by_race.csv"
+  // ).then((data) => {
+  //   irData = groupIRData(data as any);
+  //   // console.log(data, irData);
+  //   resizeIR();
+  // });
   d3.csv(
-    "https://raw.githubusercontent.com/dailynexusdata/crime-report/main/dist/data/involvement_by_race.csv"
-  ).then((data) => {
-    irData = groupIRData(data as any);
-    // console.log(data, irData);
-    resizeIR();
-  });
-  d3.csv(
-    //"http://127.0.0.1:5501/dist/data/race.csv"
+    // "dist/data/race.csv"
     "https://raw.githubusercontent.com/dailynexusdata/crime-report/main/dist/data/race.csv"
   ).then((dat) => {
     const data = {};
