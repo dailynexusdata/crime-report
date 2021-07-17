@@ -529,26 +529,78 @@ arrests %>%
 ```
 ```{r}
 racearrests <- arrests %>%
+  filter(Involvement != "DFC") %>%
   select(race.group) %>%
   group_by(race.group) %>%
   count() %>%
   ungroup() %>%
-  mutate(pct = n / sum(n)) %>%
+  mutate(pct = n) %>%
   drop_na() %>%
   select(race=race.group, tot=n, pct=pct) %>%
-  mutate(exp = c(0.214, 0.033, 0.241,0, 0, 0.569)) %>%
-  mutate(sum = exp/sum(pct))%>%
-  arrange(sum) %>%
+  mutate(exp = c(0.214, 0.033, 0.241,0, 0, 0.471) * sum(tot)) %>%
+  #mutate(sum = exp/sum(pct))%>%
+  arrange(pct) 
+
+
+racearrests
+
+racearrests %>%
   write.csv("../dist/data/race.csv")
+
+racearrests %>%
+  summarise(a = sum(exp))
 ```
 
 ```{r}
 arrests %>%
+  mutate(
+    group = ifelse(
+      group == "Alcohol", "Alcohol",
+      ifelse(
+        group == "Partying", "Partying",
+        ifelse(
+          group == "Disorderly Conduct", "Disorderly Conduct",
+          "Other"
+        )
+      )
+    )
+  ) %>%
   filter(real.age >= 18) %>%
   group_by(real.age, group) %>%
   summarise(n = n()) %>%
   select(age = real.age, n, group) %>%
   drop_na() %>%
   write.csv("../dist/data/age.csv")
+```
+
+
+
+```{r}
+snap <- data.frame(
+  year=2009:2020,
+  nspy=c(2584, 2238, 2013, 1644, 1729, 1841, 1779, 1571, 1483, 1439, 1228, 1518),
+  dac=c(1148, 785, 638, 540, 513, 549, 448, 472, 456, 363, 376, 96),
+  cite=c(206, 263, 206, 245, 245, 253, 235, 223, 209, 204, 149, 337),
+  SNAP=c(rep(NA, 6), 769, 661, 615, 629, 592, 348)#,
+  #CALLS=c(rep(NA, 6), 31924, 32713, 34236, 32398, 31376, 32665)
+)
+
+ggplot(
+  pivot_longer(snap,c(nspy, dac, cite)),
+  aes(x=year, y=value)
+) +
+  geom_line(aes(color=name))
+
+snap %>%
+  mutate(rat = nspy / dac) %>%
+  filter(year!=2020) %>%
+  ggplot(aes(x=year, y=rat)) +
+  geom_line()
+
+```
+
+```{r}
+snap <- read.csv("snap.csv") %>%
+  rename(year=Year, nspy=NSPY, dac=DAC, cite=CITE)
 ```
 

@@ -1,25 +1,8 @@
-import * as d3 from "d3";
+"use strict";
 
-interface arrTypeDataType {
-  group: string;
-  desc: string;
-  n: number;
-  viol: 0 | 1;
-}
-interface marginType {
-  left: number;
-  right: number;
-  top: number;
-  bottom: number;
-}
-interface sizeType {
-  height: number;
-  width: number;
-}
-const groupByAge = (data) => {
-  const output = {};
-
-  data.forEach((dat) => {
+var groupByAge = function (data) {
+  var output = {};
+  data.forEach(function (dat) {
     if (Object.keys(output).includes(dat.age)) {
       output[dat.age].push(dat);
     } else {
@@ -27,52 +10,61 @@ const groupByAge = (data) => {
     }
   });
   delete output.NA;
-
   return output;
 };
-const crimes = ["Alcohol", "Partying", "Disorderly Conduct", "Other"];
-
-const ageWide = (data, size, margin) => {
-  const tooltipAlignmentx = (x, tooltipBox) => {
+var crimes = ["Alcohol", "Partying", "Disorderly Conduct", "Other"];
+var ageWide = function (data, size, margin) {
+  var tooltipAlignmentx = function (x, tooltipBox) {
     return Math.min(size.width1 - tooltipBox.width, x + 5) + "px";
   };
-
-  const tooltipAlignmenty = (y, tooltipBox) => {
+  var tooltipAlignmenty = function (y, tooltipBox) {
     if (y > size.height / 2) {
       return y - tooltipBox.height - 90 + "px";
     }
     return Math.min(y - 70, size.height) + "px";
   };
-  const grouped = Object.entries(groupByAge(data)).map(([age, data]) => {
-    let nAgeGroup = 0;
-
-    crimes.forEach((crime) => {
-      nAgeGroup += data.find(({ group }) => crime === group)
-        ? Number(data.find(({ group }) => crime === group).n)
+  var grouped = Object.entries(groupByAge(data)).map(function (_a) {
+    var age = _a[0],
+      data = _a[1];
+    var nAgeGroup = 0;
+    crimes.forEach(function (crime) {
+      nAgeGroup += data.find(function (_a) {
+        var group = _a.group;
+        return crime === group;
+      })
+        ? Number(
+            data.find(function (_a) {
+              var group = _a.group;
+              return crime === group;
+            }).n
+          )
         : 0;
     });
-
-    let curr = 0;
-    const out = {};
+    var curr = 0;
+    var out = {};
     // console.log(nAgeGroup);
-
-    crimes.forEach((crime) => {
-      const arr = data.find(({ group }) => crime === group);
+    crimes.forEach(function (crime) {
+      var arr = data.find(function (_a) {
+        var group = _a.group;
+        return crime === group;
+      });
       // console.log(crime, data[crime]);
-      const next = arr ? arr.n / nAgeGroup : 0;
+      var next = arr ? arr.n / nAgeGroup : 0;
       out[crime] = [curr, curr + next];
       curr += next;
     });
-
     return [+age, out];
   });
-
-  const collapsed = {};
-  Object.entries(groupByAge(data)).forEach(([age, subgroup]) => {
-    collapsed[age] = subgroup.reduce((a, { n }) => a + Number(n), 0);
+  var collapsed = {};
+  Object.entries(groupByAge(data)).forEach(function (_a) {
+    var age = _a[0],
+      subgroup = _a[1];
+    collapsed[age] = subgroup.reduce(function (a, _a) {
+      var n = _a.n;
+      return a + Number(n);
+    }, 0);
   });
-
-  const container = d3
+  var container = d3
     .select("#age")
     .style("font-family", "Helvetica Neue, Helvetica, Arial, sans-serif");
   container
@@ -88,31 +80,25 @@ const ageWide = (data, size, margin) => {
   //     'Top 3 crime categories as listed in the "Violent Crimes Make up 6% of All Crimes in I.V." plot with all other crimes classified as "Other".'
   //   )
   //   .style("margin", "0 10px 5px 10px");
-
-  const plotArea = container
+  var plotArea = container
     .append("div")
     .style("display", "flex")
     .style("flex-direction", "row")
     .style("align-items", "center")
     .style("width", size.width1 + size.width2 + "px");
-
-  const svgBars = plotArea.append("svg");
-  const svgLine = plotArea.append("svg");
-
+  var svgBars = plotArea.append("svg");
+  var svgLine = plotArea.append("svg");
   svgBars.attr("height", size.height).attr("width", size.width1);
   svgLine.attr("height", size.height).attr("width", size.width2);
-
-  const y = d3
+  var y = d3
     .scaleLinear()
     .domain([grouped[0][0], grouped[grouped.length - 1][0]])
     .range([margin.top, size.height - margin.bottom]);
-
-  const x1 = d3.scaleLinear().range([margin.left, size.width1 - margin.right]);
-  const x2 = d3
+  var x1 = d3.scaleLinear().range([margin.left, size.width1 - margin.right]);
+  var x2 = d3
     .scaleLinear()
     .domain([0, 1100])
     .range([10, size.width2 - 30]);
-
   svgBars
     .append("g")
     .style("font-size", "16px")
@@ -122,12 +108,14 @@ const ageWide = (data, size, margin) => {
       d3
         .axisTop(x1)
         .ticks(5)
-        .tickFormat((d) => `${Math.round((d as number) * 100)}`)
+        .tickFormat(function (d) {
+          return "" + Math.round(d * 100);
+        })
     );
   svgBars
     .append("g")
     .style("font-size", "16px")
-    .attr("transform", `translate(${margin.left}, 0)`)
+    .attr("transform", "translate(" + margin.left + ", 0)")
     .attr("color", "#adadad")
     .call(d3.axisLeft(y));
   svgBars
@@ -162,7 +150,6 @@ const ageWide = (data, size, margin) => {
     .attr("text-anchor", "end")
     // .style("font-size", "16px")
     .attr("fill", "#adadad");
-
   svgLine
     .append("svg:defs")
     .append("svg:marker")
@@ -186,14 +173,24 @@ const ageWide = (data, size, margin) => {
     .append("path")
     .attr(
       "d",
-      `M ${x2(600)} ${y(30)} Q ${x2(850)} ${y(27)}, ${x2(700)} ${y(23) + 5}`
+      "M " +
+        x2(600) +
+        " " +
+        y(30) +
+        " Q " +
+        x2(850) +
+        " " +
+        y(27) +
+        ", " +
+        x2(700) +
+        " " +
+        (y(23) + 5)
     )
     .attr("marker-end", "url(#triangle)")
     .attr("fill", "none")
     .attr("stroke", "black")
     .attr("stroke-width", "2px");
-
-  const tooltip = plotArea
+  var tooltip = plotArea
     .append("div")
     .style("position", "absolute")
     .append("div")
@@ -204,15 +201,14 @@ const ageWide = (data, size, margin) => {
     .style("padding", "5px")
     .style("width", "230px")
     .style("display", "none");
-
-  plotArea.on("mouseenter touchstart", () => {
+  plotArea.on("mouseenter touchstart", function () {
     plotArea.selectAll("rect[class^='bar']").attr("fill-opacity", 1);
-    plotArea.on("mousemove touchstart", (event) => {
+    plotArea.on("mousemove touchstart", function (event) {
       tooltip.style("display", "block");
-
       //   tooltip.html(interactions[0].race);
-      const [xpos, ypos] = d3.pointer(event);
-
+      var _a = d3.pointer(event),
+        xpos = _a[0],
+        ypos = _a[1];
       if (
         ypos < margin.top ||
         ypos > size.height - 4 ||
@@ -223,49 +219,64 @@ const ageWide = (data, size, margin) => {
         tooltip.style("display", "none");
         return;
       }
-
-      const idx = Math.min(Math.max(Math.round(y.invert(ypos)), 18), 65);
-      const [group, ttd] = Object.values(grouped)[idx - 18];
-
-      const tooltipData = Object.entries(ttd)
-        .sort(([_, [a, b]], [__, [c, d]]) => a - c)
-        .map(([group, [a, b]]) => {
+      var idx = Math.min(Math.max(Math.round(y.invert(ypos)), 18), 65);
+      var _b = Object.values(grouped)[idx - 18],
+        group = _b[0],
+        ttd = _b[1];
+      var tooltipData = Object.entries(ttd)
+        .sort(function (_a, _b) {
+          var _ = _a[0],
+            _c = _a[1],
+            a = _c[0],
+            b = _c[1];
+          var __ = _b[0],
+            _d = _b[1],
+            c = _d[0],
+            d = _d[1];
+          return a - c;
+        })
+        .map(function (_a) {
+          var group = _a[0],
+            _b = _a[1],
+            a = _b[0],
+            b = _b[1];
           return [group, b - a];
         });
       // .filter(([a, b]) => b > 0);
-
       plotArea.selectAll("rect[class^='bar']").attr("fill-opacity", 0.1);
-      plotArea.selectAll(`.bar-${idx}`).attr("fill-opacity", 1);
-
+      plotArea.selectAll(".bar-" + idx).attr("fill-opacity", 1);
       tooltip.html(
-        `Age ${group}<hr><b>Total # of Crimes: ${
-          collapsed[group]
-        }</b><br>${tooltipData
-          .map(
-            ([grp, pct]) =>
-              `${grp}: ${
-                pct < 0.005 ? (pct === 0 ? 0 : "<1") : Math.round(pct * 100)
-              }%`
-          )
-          .join("<br>")}`
+        "Age " +
+          group +
+          "<hr><b>Total # of Crimes: " +
+          collapsed[group] +
+          "</b><br>" +
+          tooltipData
+            .map(function (_a) {
+              var grp = _a[0],
+                pct = _a[1];
+              return (
+                grp +
+                ": " +
+                (pct < 0.005 ? (pct === 0 ? 0 : "<1") : Math.round(pct * 100)) +
+                "%"
+              );
+            })
+            .join("<br>")
       );
-
-      const tooltipBox = tooltip.node().getBoundingClientRect();
-      const xval = tooltipAlignmentx(xpos, tooltipBox);
-      const yval = tooltipAlignmenty(ypos, tooltipBox);
-
+      var tooltipBox = tooltip.node().getBoundingClientRect();
+      var xval = tooltipAlignmentx(xpos, tooltipBox);
+      var yval = tooltipAlignmenty(ypos, tooltipBox);
       tooltip.style("left", xval).style("top", yval);
     });
-    plotArea.on("mouseleave", () => {
+    plotArea.on("mouseleave", function () {
       tooltip.style("display", "none");
       // d3.selectAll("rect[class^='bar']").attr("fill-opacity", 0);
       plotArea.selectAll("rect[class^='bar']").attr("fill-opacity", 1);
     });
   });
-
-  const grays = d3.scaleSequential(d3.interpolateGreys).domain([-5, 10]);
-
-  const getColor = (i) => {
+  var grays = d3.scaleSequential(d3.interpolateGreys).domain([-5, 10]);
+  var getColor = function (i) {
     if (i === 0) {
       return "#CC575F88"; //"#005aa3";
     }
@@ -277,12 +288,15 @@ const ageWide = (data, size, margin) => {
     }
     return grays(i - 3);
   };
-
-  grouped.forEach(([age, subgroups]) => {
-    Object.entries(subgroups).map(([group, range], i) => {
+  grouped.forEach(function (_a) {
+    var age = _a[0],
+      subgroups = _a[1];
+    Object.entries(subgroups).map(function (_a, i) {
+      var group = _a[0],
+        range = _a[1];
       svgBars
         .append("rect")
-        .attr("class", `bar-${age}`)
+        .attr("class", "bar-" + age)
         .attr("y", y(age))
         .attr("height", 5)
         .attr("x", x1(range[0]))
@@ -291,7 +305,7 @@ const ageWide = (data, size, margin) => {
         .attr("fill-opacity", 1);
     });
   });
-  const legendarea = container
+  var legendarea = container
     .append("div")
     .style("display", "flex")
     .style("justify-content", "space-evenly")
@@ -300,10 +314,9 @@ const ageWide = (data, size, margin) => {
     .style("min-height", "20px")
     .style("margin-left", margin.left + "px")
     .style("width", size.width1 - margin.left - margin.right + "px");
-
   legendarea.attr("height", 20).attr("width", size.width1);
-  crimes.forEach((lab, i) => {
-    const item = legendarea
+  crimes.forEach(function (lab, i) {
+    var item = legendarea
       .append("div")
       .style("display", "flex")
       .style("align-items", "center");
@@ -322,7 +335,6 @@ const ageWide = (data, size, margin) => {
       // .style("background-color", getColor(i))
       .attr("alignment-baseline", "middle");
   });
-
   svgLine
     .append("line")
     .attr("x1", x2(0))
@@ -330,21 +342,23 @@ const ageWide = (data, size, margin) => {
     .attr("y1", y(18))
     .attr("y2", y(66))
     .attr("stroke", "#d3d3d3");
-  const line = d3
+  var line = d3
     .line()
-    .x((d) => {
+    .x(function (d) {
       return x2(d[1]);
     })
-    .y((d) => {
+    .y(function (d) {
       return y(Number(d[0]));
     });
-
-  const area = d3
+  var area = d3
     .area()
     .x0(x2(0))
-    .x1((d) => x2(d[1]))
-    .y((d) => y(d[0]));
-
+    .x1(function (d) {
+      return x2(d[1]);
+    })
+    .y(function (d) {
+      return y(d[0]);
+    });
   svgLine
     .append("path")
     .datum(Object.entries(collapsed))
@@ -352,10 +366,15 @@ const ageWide = (data, size, margin) => {
     .attr("stroke", "black")
     .attr("stroke-width", "2px")
     .attr("fill", "none");
-
   svgLine
     .append("path")
-    .datum(Object.entries(collapsed).filter(([a, _]) => a <= 23))
+    .datum(
+      Object.entries(collapsed).filter(function (_a) {
+        var a = _a[0],
+          _ = _a[1];
+        return a <= 23;
+      })
+    )
     .attr("d", area)
     .attr("stroke", "none")
     .attr("fill", "#d3d3d3aa");
@@ -367,48 +386,58 @@ const ageWide = (data, size, margin) => {
     )
     .style("margin", "0 10px");
 };
-
-const ageVert = (data, size, margin) => {
-  const tooltipAlignmentx = (x, tooltipBox) => {
+var ageVert = function (data, size, margin) {
+  var tooltipAlignmentx = function (x, tooltipBox) {
     return Math.min(size.width1 - tooltipBox.width, x) + "px";
   };
-
-  const tooltipAlignmenty = (y, tooltipBox) => {
+  var tooltipAlignmenty = function (y, tooltipBox) {
     if (y > size.height / 2) {
       return y - tooltipBox.height - 60 + "px";
     }
     return Math.min(y - 40, size.height) + "px";
   };
-  const grouped = Object.entries(groupByAge(data)).map(([age, data]) => {
-    let nAgeGroup = 0;
-
-    crimes.forEach((crime) => {
-      nAgeGroup += data.find(({ group }) => crime === group)
-        ? Number(data.find(({ group }) => crime === group).n)
+  var grouped = Object.entries(groupByAge(data)).map(function (_a) {
+    var age = _a[0],
+      data = _a[1];
+    var nAgeGroup = 0;
+    crimes.forEach(function (crime) {
+      nAgeGroup += data.find(function (_a) {
+        var group = _a.group;
+        return crime === group;
+      })
+        ? Number(
+            data.find(function (_a) {
+              var group = _a.group;
+              return crime === group;
+            }).n
+          )
         : 0;
     });
-
-    let curr = 0;
-    const out = {};
+    var curr = 0;
+    var out = {};
     // console.log(nAgeGroup);
-
-    crimes.forEach((crime) => {
-      const arr = data.find(({ group }) => crime === group);
+    crimes.forEach(function (crime) {
+      var arr = data.find(function (_a) {
+        var group = _a.group;
+        return crime === group;
+      });
       // console.log(crime, data[crime]);
-      const next = arr ? arr.n / nAgeGroup : 0;
+      var next = arr ? arr.n / nAgeGroup : 0;
       out[crime] = [curr, curr + next];
       curr += next;
     });
-
     return [+age, out];
   });
-
-  const collapsed = {};
-  Object.entries(groupByAge(data)).forEach(([age, subgroup]) => {
-    collapsed[age] = subgroup.reduce((a, { n }) => a + Number(n), 0);
+  var collapsed = {};
+  Object.entries(groupByAge(data)).forEach(function (_a) {
+    var age = _a[0],
+      subgroup = _a[1];
+    collapsed[age] = subgroup.reduce(function (a, _a) {
+      var n = _a.n;
+      return a + Number(n);
+    }, 0);
   });
-
-  const container = d3
+  var container = d3
     .select("#age")
     .style("font-family", "Helvetica Neue, Helvetica, Arial, sans-serif");
   container
@@ -424,54 +453,52 @@ const ageVert = (data, size, margin) => {
   //     'Top 3 crime categories as listed in the "Violent Crimes Make up 6% of All Crimes in I.V." plot with all other crimes classified as "Other".'
   //   )
   //   .style("margin", "0 10px 5px 10px");
-
-  const plotArea = container
+  var plotArea = container
     .append("div")
     .style("display", "flex")
     .style("flex-direction", "column")
     .style("align-items", "center")
     .style("width", size.width + "px");
-
-  const svgLine = plotArea.append("svg");
-  const svgBars = plotArea.append("svg");
-
+  var svgLine = plotArea.append("svg");
+  var svgBars = plotArea.append("svg");
   svgBars.attr("height", size.height2).attr("width", size.width);
   svgLine.attr("height", size.height1).attr("width", size.width);
-
-  const y1 = d3
+  var y1 = d3
     .scaleLinear()
     .domain([0, 1100])
     .range([size.height1 - 10, margin.top - 5]);
-
-  const x = d3
+  var x = d3
     .scaleLinear()
     .domain([grouped[0][0], grouped[grouped.length - 1][0]])
     .range([margin.left, size.width - margin.right]);
-  const y2 = d3
+  var y2 = d3
     .scaleLinear()
     .range([size.height2 - margin.bottom, margin.top - 10]);
-
   svgBars
     .append("g")
     .style("font-size", "16px")
-    .attr("transform", `translate(0, ${size.height2 - margin.bottom})`)
+    .attr("transform", "translate(0, " + (size.height2 - margin.bottom) + ")")
     .attr("color", "#adadad")
     .call(
       d3
         .axisBottom(x)
         .ticks(5)
-        .tickFormat((d) => d)
+        .tickFormat(function (d) {
+          return d;
+        })
     );
   svgBars
     .append("g")
     .style("font-size", "16px")
-    .attr("transform", `translate(${margin.left}, 0)`)
+    .attr("transform", "translate(" + margin.left + ", 0)")
     .attr("color", "#adadad")
     .call(
       d3
         .axisLeft(y2)
         .ticks(5)
-        .tickFormat((d) => Number(d * 100))
+        .tickFormat(function (d) {
+          return Number(d * 100);
+        })
     );
   svgBars
     .append("text")
@@ -492,7 +519,7 @@ const ageVert = (data, size, margin) => {
   svgLine
     .append("g")
     .style("font-size", "16px")
-    .attr("transform", `translate(${margin.left}, 0)`)
+    .attr("transform", "translate(" + margin.left + ", 0)")
     .attr("color", "#adadad")
     .call(d3.axisLeft(y1).ticks(1).tickValues([0, 1100]));
   svgLine
@@ -529,7 +556,18 @@ const ageVert = (data, size, margin) => {
     .append("path")
     .attr(
       "d",
-      `M ${x(33) - 5} ${y1(700)} Q ${x(29)} ${y1(1100)}, ${x(24)} ${y1(600)}`
+      "M " +
+        (x(33) - 5) +
+        " " +
+        y1(700) +
+        " Q " +
+        x(29) +
+        " " +
+        y1(1100) +
+        ", " +
+        x(24) +
+        " " +
+        y1(600)
     )
     .attr("marker-end", "url(#triangle)")
     .attr("fill", "none")
@@ -542,9 +580,8 @@ const ageVert = (data, size, margin) => {
     .attr("y1", y1(0))
     .attr("y2", y1(0))
     .attr("stroke", "#d3d3d3");
-  const grays = d3.scaleSequential(d3.interpolateGreys).domain([-5, 10]);
-
-  const getColor = (i) => {
+  var grays = d3.scaleSequential(d3.interpolateGreys).domain([-5, 10]);
+  var getColor = function (i) {
     if (i === 0) {
       return "#CC575F88"; //"#005aa3";
     }
@@ -556,16 +593,19 @@ const ageVert = (data, size, margin) => {
     }
     return grays(i - 3);
   };
-
-  grouped.forEach(([age, subgroups]) => {
-    Object.entries(subgroups).map(([group, range], i) => {
+  grouped.forEach(function (_a) {
+    var age = _a[0],
+      subgroups = _a[1];
+    Object.entries(subgroups).map(function (_a, i) {
+      var group = _a[0],
+        range = _a[1];
       if (range[1] - range[0] === 0) {
         return;
       }
       // console.log(range, range[1] - range[0], y2(range[0]));
       svgBars
         .append("rect")
-        .attr("class", `bar-${age}`)
+        .attr("class", "bar-" + age)
         .attr("y", y2(range[1]))
         .attr("height", y2(range[0]) - y2(range[1]))
         .attr("x", x(age))
@@ -574,7 +614,7 @@ const ageVert = (data, size, margin) => {
         .attr("fill-opacity", 1);
     });
   });
-  const legendarea = container
+  var legendarea = container
     .append("div")
     .style("display", "flex")
     .style("justify-content", "space-evenly")
@@ -583,10 +623,9 @@ const ageVert = (data, size, margin) => {
     .style("min-height", "20px")
     .style("margin-left", margin.left + "px")
     .style("width", size.width - margin.left - margin.right + "px");
-
   legendarea.attr("height", 20).attr("width", size.width1);
-  crimes.forEach((lab, i) => {
-    const item = legendarea
+  crimes.forEach(function (lab, i) {
+    var item = legendarea
       .append("div")
       .style("display", "flex")
       .style("align-items", "center");
@@ -605,16 +644,15 @@ const ageVert = (data, size, margin) => {
       // .style("background-color", getColor(i))
       .attr("alignment-baseline", "middle");
   });
-
-  const line = d3
+  var line = d3
     .line()
-    .x((d) => {
+    .x(function (d) {
       return x(Number(d[0]));
     })
-    .y((d) => {
+    .y(function (d) {
       return y1(d[1]);
     });
-  const tooltip = plotArea
+  var tooltip = plotArea
     .append("div")
     .style("position", "absolute")
     .append("div")
@@ -625,14 +663,14 @@ const ageVert = (data, size, margin) => {
     .style("padding", "5px")
     .style("width", "230px")
     .style("display", "none");
-  plotArea.on("mouseenter touchstart", () => {
+  plotArea.on("mouseenter touchstart", function () {
     plotArea.selectAll("rect[class^='bar']").attr("fill-opacity", 1);
-    plotArea.on("mousemove touchstart", (event) => {
+    plotArea.on("mousemove touchstart", function (event) {
       tooltip.style("display", "block");
-
       //   tooltip.html(interactions[0].race);
-      const [xpos, ypos] = d3.pointer(event);
-
+      var _a = d3.pointer(event),
+        xpos = _a[0],
+        ypos = _a[1];
       if (
         ypos < margin.top ||
         ypos > size.height - 4 ||
@@ -643,51 +681,71 @@ const ageVert = (data, size, margin) => {
         tooltip.style("display", "none");
         return;
       }
-
-      const idx = Math.min(Math.max(Math.round(x.invert(xpos)), 18), 65);
-      const [group, ttd] = Object.values(grouped)[idx - 18];
-
-      const tooltipData = Object.entries(ttd)
-        .sort(([_, [a, b]], [__, [c, d]]) => a - c)
-        .map(([group, [a, b]]) => {
+      var idx = Math.min(Math.max(Math.round(x.invert(xpos)), 18), 65);
+      var _b = Object.values(grouped)[idx - 18],
+        group = _b[0],
+        ttd = _b[1];
+      var tooltipData = Object.entries(ttd)
+        .sort(function (_a, _b) {
+          var _ = _a[0],
+            _c = _a[1],
+            a = _c[0],
+            b = _c[1];
+          var __ = _b[0],
+            _d = _b[1],
+            c = _d[0],
+            d = _d[1];
+          return a - c;
+        })
+        .map(function (_a) {
+          var group = _a[0],
+            _b = _a[1],
+            a = _b[0],
+            b = _b[1];
           return [group, b - a];
         });
       // .filter(([a, b]) => b > 0);
-
       plotArea.selectAll("rect[class^='bar']").attr("fill-opacity", 0.1);
-      plotArea.selectAll(`.bar-${idx}`).attr("fill-opacity", 1);
-
+      plotArea.selectAll(".bar-" + idx).attr("fill-opacity", 1);
       tooltip.html(
-        `Age ${group}<hr><b>Total # of Crimes: ${
-          collapsed[group]
-        }</b><br>${tooltipData
-          .map(
-            ([grp, pct]) =>
-              `${grp}: ${
-                pct < 0.005 ? (pct === 0 ? 0 : "<1") : Math.round(pct * 100)
-              }%`
-          )
-          .join("<br>")}`
+        "Age " +
+          group +
+          "<hr><b>Total # of Crimes: " +
+          collapsed[group] +
+          "</b><br>" +
+          tooltipData
+            .map(function (_a) {
+              var grp = _a[0],
+                pct = _a[1];
+              return (
+                grp +
+                ": " +
+                (pct < 0.005 ? (pct === 0 ? 0 : "<1") : Math.round(pct * 100)) +
+                "%"
+              );
+            })
+            .join("<br>")
       );
-
-      const tooltipBox = tooltip.node().getBoundingClientRect();
-      const xval = tooltipAlignmentx(xpos, tooltipBox);
-      const yval = tooltipAlignmenty(ypos, tooltipBox);
-
+      var tooltipBox = tooltip.node().getBoundingClientRect();
+      var xval = tooltipAlignmentx(xpos, tooltipBox);
+      var yval = tooltipAlignmenty(ypos, tooltipBox);
       tooltip.style("left", xval).style("top", yval);
     });
-    plotArea.on("mouseleave touchend", () => {
+    plotArea.on("mouseleave touchend", function () {
       tooltip.style("display", "none");
       // d3.selectAll("rect[class^='bar']").attr("fill-opacity", 0);
       plotArea.selectAll("rect[class^='bar']").attr("fill-opacity", 1);
     });
   });
-  const area = d3
+  var area = d3
     .area()
-    .x((d) => x(d[0]))
+    .x(function (d) {
+      return x(d[0]);
+    })
     .y0(y1(0))
-    .y1((d) => y1(d[1]));
-
+    .y1(function (d) {
+      return y1(d[1]);
+    });
   svgLine
     .append("path")
     .datum(Object.entries(collapsed))
@@ -695,10 +753,15 @@ const ageVert = (data, size, margin) => {
     .attr("stroke", "black")
     .attr("stroke-width", "2px")
     .attr("fill", "none");
-
   svgLine
     .append("path")
-    .datum(Object.entries(collapsed).filter(([a, _]) => a <= 23))
+    .datum(
+      Object.entries(collapsed).filter(function (_a) {
+        var a = _a[0],
+          _ = _a[1];
+        return a <= 23;
+      })
+    )
     .attr("d", area)
     .attr("stroke", "none")
     .attr("fill", "#d3d3d3aa");
@@ -710,10 +773,9 @@ const ageVert = (data, size, margin) => {
     )
     .style("margin", "0 10px");
 };
-const groupArrTypeData = (data: arrTypeDataType) => {
-  const output = {};
-
-  data.forEach((dat) => {
+var groupArrTypeData = function (data) {
+  var output = {};
+  data.forEach(function (dat) {
     if (Object.keys(output).includes(dat.group)) {
       output[dat.group].push({
         desc: dat.desc,
@@ -732,39 +794,51 @@ const groupArrTypeData = (data: arrTypeDataType) => {
       ];
     }
   });
-
-  const order = Object.entries(output)
-    .map(([group, arr]) => {
-      return [group, arr.reduce((a, { pct }) => a + pct, 0)];
+  var order = Object.entries(output)
+    .map(function (_a) {
+      var group = _a[0],
+        arr = _a[1];
+      return [
+        group,
+        arr.reduce(function (a, _a) {
+          var pct = _a.pct;
+          return a + pct;
+        }, 0),
+      ];
     })
-    .sort(([_, a], [__, b]) => a - b)
-    .map(([g, _]) => g);
-
-  const outputOrdered = {};
-
-  order.forEach((group) => {
+    .sort(function (_a, _b) {
+      var _ = _a[0],
+        a = _a[1];
+      var __ = _b[0],
+        b = _b[1];
+      return a - b;
+    })
+    .map(function (_a) {
+      var g = _a[0],
+        _ = _a[1];
+      return g;
+    });
+  var outputOrdered = {};
+  order.forEach(function (group) {
     outputOrdered[group] = output[group];
   });
-
   return outputOrdered;
 };
-
-(() => {
-  let ageData = null;
-  const resizeAgePlot = () => {
-    const width = Math.max(Math.min(600, window.innerWidth), 270);
-
+(function () {
+  var ageData = null;
+  var resizeAgePlot = function () {
+    var width = Math.max(Math.min(600, window.innerWidth), 270);
     d3.select("#age")
       .style("width", width + "px")
       .selectAll("*")
       .remove();
     if (window.innerWidth < 600) {
-      const size = {
+      var size = {
         height1: 90,
         height2: 320,
         width: width,
       };
-      const margin: marginType = {
+      var margin = {
         left: 60,
         right: 30,
         top: 35,
@@ -772,12 +846,12 @@ const groupArrTypeData = (data: arrTypeDataType) => {
       };
       ageVert(ageData, size, margin);
     } else {
-      const size = {
+      var size = {
         height: 300,
         width1: width * 0.8,
         width2: width * 0.2,
       };
-      const margin: marginType = {
+      var margin = {
         left: 55,
         right: 15,
         top: 40,
@@ -786,14 +860,14 @@ const groupArrTypeData = (data: arrTypeDataType) => {
       ageWide(ageData, size, margin);
     }
   };
-  window.addEventListener("resize", () => {
+  window.addEventListener("resize", function () {
     // resizeIR();
     resizeAgePlot();
   });
   d3.csv(
     "dist/data/age.csv"
     // "https://raw.githubusercontent.com/dailynexusdata/crime-report/main/dist/data/age.csv"
-  ).then((data) => {
+  ).then(function (data) {
     ageData = data;
     resizeAgePlot();
   });

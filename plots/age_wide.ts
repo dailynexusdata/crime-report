@@ -34,7 +34,7 @@ const groupByAge = (data) => {
 
 const crimes = ["Alcohol", "Partying", "Disorderly Conduct", "Other"];
 
-const agePlot = (data, size, margin) => {
+const ageWide = (data, size, margin) => {
   const tooltipAlignmentx = (x, tooltipBox) => {
     return Math.min(size.width1 - tooltipBox.width, x + 5) + "px";
   };
@@ -79,17 +79,17 @@ const agePlot = (data, size, margin) => {
     .style("font-family", "Helvetica Neue, Helvetica, Arial, sans-serif");
   container
     .append("h2")
-    .text("Most Crimes are Committed by People College-Aged")
+    .text("Top Crimes in Isla Vista by Age")
     .style("margin", "10px 10px 0 10px");
-  container
-    .append("p")
-    // .text(
-    //   "College aged residents make up the majority of crime and are responsible for the majority of the partying and disorderly conduct related arrests."
-    // )
-    .text(
-      'Showing the top 3 crime categories as listed in the "Violent Crimes Make up 6% of All Crimes in IV" plot with all other crimes classified as "Other".'
-    )
-    .style("margin", "0 10px 5px 10px");
+  // container
+  //   .append("p")
+  //   // .text(
+  //   //   "College aged residents make up the majority of crime and are responsible for the majority of the partying and disorderly conduct related arrests."
+  //   // )
+  //   .text(
+  //     'Top 3 crime categories as listed in the "Violent Crimes Make up 6% of All Crimes in I.V." plot with all other crimes classified as "Other".'
+  //   )
+  //   .style("margin", "0 10px 5px 10px");
 
   const plotArea = container
     .append("div")
@@ -365,8 +365,5 @@ const agePlot = (data, size, margin) => {
     .append("p")
     .style("font-family", "Helvetica Neue, Helvetica, Arial, sans-serif")
     .text("Data includes adult arrest info from 2013, 2018-2020. Source: IVFP.")
-    .style("margin", "0 10px")
-    .append("hr");
+    .style("margin", "0 10px");
 };
-
-export default agePlot;

@@ -141,12 +141,12 @@ let ageData = null;
   const resizeRacePlot = () => {
     const size = {
       height: 300,
-      width: Math.max(Math.min(600, window.innerWidth), 270),
+      width: Math.max(Math.min(600, window.innerWidth), 250),
     };
 
     const margin: marginType = {
       left: 25 + (window.innerWidth < 600 ? 0 : 160),
-      right: 20,
+      right: 30,
       top: 40,
       bottom: 10,
     };

@@ -1,32 +1,6 @@
-import * as d3 from "d3";
-import { toNamespacedPath } from "path/posix";
-
-interface dataType {
-  [group: string]: Array<{
-    desc: string;
-    n: number;
-    viol: 0 | 1;
-    pct: number;
-  }>;
-}
-interface marginType {
-  left: number;
-  right: number;
-  top: number;
-  bottom: number;
-}
-interface sizeType {
-  height: number;
-  width: number;
-}
-
-const arrestType = (
-  data: dataType,
-  size: sizeType,
-  margin: marginType,
-  collapsed: boolean
-) => {
-  const tooltipAlignmentx = (x, tooltipBox) => {
+"use strict";
+var arrestType = function (data, size, margin, collapsed) {
+  var tooltipAlignmentx = function (x, tooltipBox) {
     if (collapsed) {
       return size.width / 2;
     }
@@ -37,8 +11,7 @@ const arrestType = (
       ) + "px"
     );
   };
-
-  const tooltipAlignmenty = (y, tooltipBox) => {
+  var tooltipAlignmenty = function (y, tooltipBox) {
     if (collapsed) {
       return y + 10 + "px";
     }
@@ -47,7 +20,7 @@ const arrestType = (
     }
     return Math.max(0, y + 10) + "px";
   };
-  const container = d3
+  var container = d3
     .select("#arrtype")
     .style("font-family", "Helvetica Neue, Helvetica, Arial, sans-serif");
   container
@@ -60,15 +33,13 @@ const arrestType = (
       "Click on the bars to see which crimes are included in each category."
     )
     .style("margin", "0 10px 5px 10px");
-
-  const plotArea = container
+  var plotArea = container
     .append("div")
     .style("display", "flex")
     .style("flex-direction", "column")
     .style("align-items", "center")
     .style("width", size.width);
-
-  const svg = plotArea.append("svg");
+  var svg = plotArea.append("svg");
   //   const legendarea = plotArea
   //     .append("div")
   //     .style("display", "flex")
@@ -77,23 +48,18 @@ const arrestType = (
   //     .style("height", "20px")
   //     .style("margin-left", margin.left - margin.right + "px")
   //     .style("width", size.width - margin.left - margin.right + "px");
-
   //   legendarea.attr("height", 20).attr("width", size.width);
   svg.attr("height", size.height).attr("width", size.width);
-
-  const y = d3
+  var y = d3
     .scaleLinear()
     .domain([0, 9])
     .range([size.height - margin.bottom, margin.top]);
-
-  const x = d3
+  var x = d3
     .scaleLinear()
     .domain([0, 0.6])
     .range([margin.left, size.width - margin.right]);
-
-  const overlap = svg.append("g");
-  const bars = svg.append("g");
-
+  var overlap = svg.append("g");
+  var bars = svg.append("g");
   svg
     .append("text")
     .text("% of Total Crimes")
@@ -101,7 +67,6 @@ const arrestType = (
     .attr("y", 15)
     // .style("font-size", "16px")
     .attr("fill", "#adadad");
-
   svg
     .append("g")
     .style("font-size", "16px")
@@ -111,9 +76,10 @@ const arrestType = (
       d3
         .axisTop(x)
         .ticks(5)
-        .tickFormat((d) => `${Math.round((d as number) * 100)}`)
+        .tickFormat(function (d) {
+          return "" + Math.round(d * 100);
+        })
     );
-
   //   ["Arrests", "Citations", "Did Not File Charges"].forEach((lab, i) => {
   //     legendarea
   //       .append("p")
@@ -124,7 +90,7 @@ const arrestType = (
   //       .style("background-color", color[i] + (i !== 0 ? "" : "44"))
   //       .attr("alignment-baseline", "middle");
   //   });
-  const tooltip = plotArea
+  var tooltip = plotArea
     .append("div")
     .style("position", "absolute")
     .append("div")
@@ -135,16 +101,15 @@ const arrestType = (
     .style("padding", "5px")
     .style("width", "230px")
     .style("display", "none");
-
-  const labels = svg.append("g");
+  var labels = svg.append("g");
   labels.style("display", "block");
-
-  plotArea.on("mouseenter touchstart", () => {
+  plotArea.on("mouseenter touchstart", function () {
     labels.style("display", "none");
-    plotArea.on("mousemove touchstart", (event) => {
+    plotArea.on("mousemove touchstart", function (event) {
       //   tooltip.html(interactions[0].race);
-      const [xpos, ypos] = d3.pointer(event);
-
+      var _a = d3.pointer(event),
+        xpos = _a[0],
+        ypos = _a[1];
       if (
         ypos < margin.top - 20 ||
         ypos > size.height + 10 ||
@@ -154,51 +119,52 @@ const arrestType = (
         tooltip.style("display", "none");
         return;
       }
-      const idx = collapsed
+      var idx = collapsed
         ? Math.min(Math.max(Math.ceil(y.invert(ypos) + 0.5), 1), 11)
         : Math.min(Math.max(Math.ceil(y.invert(ypos)), 1), 11);
-
-      const [group, tooltipData] = Object.entries(data)[idx];
-
+      var _b = Object.entries(data)[idx],
+        group = _b[0],
+        tooltipData = _b[1];
       plotArea.selectAll("rect[class^='bar']").attr("fill-opacity", 0);
       plotArea
-        .selectAll(`.bar-${group.split(/[ /]/)[0]}`)
+        .selectAll(".bar-" + group.split(/[ /]/)[0])
         .attr("fill-opacity", 1);
-
       tooltip.html(
-        `${group}<hr>${tooltipData
-          .map(
-            ({ desc, pct }) =>
-              `${desc}: ${pct < 0.005 ? "<1" : Math.round(pct * 100)}%`
-          )
-          .join("<br>")}`
+        group +
+          "<hr>" +
+          tooltipData
+            .map(function (_a) {
+              var desc = _a.desc,
+                pct = _a.pct;
+              return (
+                desc + ": " + (pct < 0.005 ? "<1" : Math.round(pct * 100)) + "%"
+              );
+            })
+            .join("<br>")
       );
-
-      const tooltipBox = tooltip.node().getBoundingClientRect();
-      const xval = tooltipAlignmentx(xpos, tooltipBox);
-      const yval = tooltipAlignmenty(ypos, tooltipBox);
-
+      var tooltipBox = tooltip.node().getBoundingClientRect();
+      var xval = tooltipAlignmentx(xpos, tooltipBox);
+      var yval = tooltipAlignmenty(ypos, tooltipBox);
       tooltip.style("left", xval).style("top", yval).style("display", "block");
     });
-    plotArea.on("mouseleave touchend", () => {
+    plotArea.on("mouseleave touchend", function () {
       labels.style("display", "block");
       tooltip.style("display", "none");
       plotArea.selectAll("rect[class^='bar']").attr("fill-opacity", 0);
     });
   });
-
-  const grays = d3.scaleSequential(d3.interpolateGreys).domain([6, -5]);
-
-  let viol = 0;
-  let lastViolIdx = 0;
-  let lastViolx = 0;
+  var grays = d3.scaleSequential(d3.interpolateGreys).domain([6, -5]);
+  var viol = 0;
+  var lastViolIdx = 0;
+  var lastViolx = 0;
   Object.entries(data)
     .slice(1, 11)
-    .forEach(([group, crimes], j) => {
-      let currx = 0;
-
+    .forEach(function (_a, j) {
+      var group = _a[0],
+        crimes = _a[1];
+      var currx = 0;
       // console.log(group);
-      crimes.forEach((crime, i) => {
+      crimes.forEach(function (crime, i) {
         // console.log({
         //   group,
         //   currx,
@@ -212,14 +178,13 @@ const arrestType = (
         }
         bars
           .append("rect")
-          .attr("class", `bar-${group.split(/[ /]/)[0]}`)
+          .attr("class", "bar-" + group.split(/[ /]/)[0])
           .attr("x", x(currx))
           .attr("y", y(j) - (collapsed ? 0 : 18))
           .attr("height", collapsed ? 18 : 18)
           .attr("width", x(crime.pct) - margin.left)
           .attr("fill", grays(i))
           .attr("fill-opacity", 0);
-
         //   if (group === "Black" && i === 0) {
         //     bars
         //       .append("text")
@@ -231,7 +196,6 @@ const arrestType = (
         //   }
         currx += crime.pct;
       });
-
       if (collapsed) {
         bars
           .append("text")
@@ -255,13 +219,11 @@ const arrestType = (
         .attr("height", collapsed ? 18 : 18)
         .attr("width", x(currx) - margin.left)
         .attr("fill", viol ? "#005AA3" : "#d3d3d399");
-
       if (viol === 1) {
         lastViolx = currx;
-
         labels
           .append("text")
-          .text(`${Math.round(currx * 100)}%`)
+          .text(Math.round(currx * 100) + "%")
           .attr("x", x(currx) + 5)
           .attr("y", y(j) - (collapsed ? -2 : 8))
           .attr("alignment-baseline", collapsed ? "hanging" : "middle")
@@ -269,7 +231,6 @@ const arrestType = (
           .attr("font-weight", "bold");
       }
     });
-
   labels
     .append("svg:defs")
     .append("svg:marker")
@@ -282,20 +243,27 @@ const arrestType = (
     .append("path")
     .attr("d", "M 6 3 0 6 0 0")
     .attr("fill", "#005AA3");
-
   labels
     .append("path")
     .attr(
       "d",
-      `M ${x(collapsed ? 0.29 : 0.28)} ${collapsed ? 220 : 160} Q ${x(
-        collapsed ? 0.27 : 0.23
-      )} ${collapsed ? 205 : 135}, ${x(0.1)} ${collapsed ? 205 : 135}`
+      "M " +
+        x(collapsed ? 0.29 : 0.28) +
+        " " +
+        (collapsed ? 220 : 160) +
+        " Q " +
+        x(collapsed ? 0.27 : 0.23) +
+        " " +
+        (collapsed ? 205 : 135) +
+        ", " +
+        x(0.1) +
+        " " +
+        (collapsed ? 205 : 135)
     )
     .attr("marker-end", "url(#triangle123)")
     .attr("fill", "none")
     .attr("stroke", "#005AA3")
     .attr("stroke-width", "2px");
-
   labels
     .append("text")
     .text("Violent Crime")
@@ -326,44 +294,47 @@ const arrestType = (
   container
     .append("p")
     .style("font-family", "Helvetica Neue, Helvetica, Arial, sans-serif")
-    .text("Data includes adult arrest info from 2013, 2018-2020. Source: IVFP.")
+    .html(
+      "Data includes adult arrest info from 2013, 2018-2020. <a href='https://docs.google.com/spreadsheets/d/1NosIFv3dq5Qqc3nLblS60ADb4w1Dtax8PBzKNr1hvcU/edit'>Source: IVFP.</a>"
+    )
     .style("margin", "0 10px");
 };
-
-const groupIRData = (data: Array<irDataType>) => {
-  const output: { [a: string]: [irDataType] } = {};
-
-  data.forEach((dat) => {
+var groupIRData = function (data) {
+  var output = {};
+  data.forEach(function (dat) {
     if (Object.keys(output).includes(dat.race)) {
       output[dat.race].push(dat);
     } else {
       output[dat.race] = [dat];
     }
   });
-
-  Object.entries(output).forEach(([group, inters]) => {
-    const sum = output[group].map((d) => Number(d.val)).reduce((a, b) => a + b);
-    inters.forEach((i) => {
+  Object.entries(output).forEach(function (_a) {
+    var group = _a[0],
+      inters = _a[1];
+    var sum = output[group]
+      .map(function (d) {
+        return Number(d.val);
+      })
+      .reduce(function (a, b) {
+        return a + b;
+      });
+    inters.forEach(function (i) {
       i.amt = i.val;
       i.tot = sum;
       i.val = Number(i.val) / sum;
     });
   });
-  const outputReversed = {};
-
+  var outputReversed = {};
   Object.keys(output)
     .reverse()
-    .forEach((key) => {
+    .forEach(function (key) {
       outputReversed[key] = output[key];
     });
-
   return outputReversed;
 };
-
-const groupArrTypeData = (data: arrTypeDataType) => {
-  const output = {};
-
-  data.forEach((dat) => {
+var groupArrTypeData = function (data) {
+  var output = {};
+  data.forEach(function (dat) {
     if (Object.keys(output).includes(dat.group)) {
       output[dat.group].push({
         desc: dat.desc,
@@ -382,33 +353,44 @@ const groupArrTypeData = (data: arrTypeDataType) => {
       ];
     }
   });
-
-  const order = Object.entries(output)
-    .map(([group, arr]) => {
-      return [group, arr.reduce((a, { pct }) => a + pct, 0)];
+  var order = Object.entries(output)
+    .map(function (_a) {
+      var group = _a[0],
+        arr = _a[1];
+      return [
+        group,
+        arr.reduce(function (a, _a) {
+          var pct = _a.pct;
+          return a + pct;
+        }, 0),
+      ];
     })
-    .sort(([_, a], [__, b]) => a - b)
-    .map(([g, _]) => g);
-
-  const outputOrdered = {};
-
-  order.forEach((group) => {
+    .sort(function (_a, _b) {
+      var _ = _a[0],
+        a = _a[1];
+      var __ = _b[0],
+        b = _b[1];
+      return a - b;
+    })
+    .map(function (_a) {
+      var g = _a[0],
+        _ = _a[1];
+      return g;
+    });
+  var outputOrdered = {};
+  order.forEach(function (group) {
     outputOrdered[group] = output[group];
   });
-
   return outputOrdered;
 };
-
-let arrData = null;
-
-(() => {
-  const resizeArrType = () => {
-    const size = {
+var arrData = null;
+(function () {
+  var resizeArrType = function () {
+    var size = {
       height: 300 * (window.innerWidth < 600 ? 1.6 : 1),
       width: Math.max(Math.min(600, window.innerWidth), 270),
     };
-
-    const margin: marginType = {
+    var margin = {
       left: 20 + (window.innerWidth < 600 ? 0 : 160),
       right: 20,
       top: 68,
@@ -420,16 +402,14 @@ let arrData = null;
       .remove();
     arrestType(arrData, size, margin, window.innerWidth < 600);
   };
-
-  window.addEventListener("resize", () => {
+  window.addEventListener("resize", function () {
     // resizeIR();
     resizeArrType();
   });
-
   d3.csv(
     "https://raw.githubusercontent.com/dailynexusdata/crime-report/main/dist/data/arrType.csv"
-  ).then((data) => {
-    arrData = groupArrTypeData(data as any);
+  ).then(function (data) {
+    arrData = groupArrTypeData(data);
     resizeArrType();
   });
 })();

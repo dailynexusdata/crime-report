@@ -1,29 +1,6 @@
-import * as d3 from "d3";
-
-interface dataType {
-  race: string;
-  val: number;
-  inv: string;
-  tot: number;
-  amt: number;
-}
-interface marginType {
-  left: number;
-  right: number;
-  top: number;
-  bottom: number;
-}
-interface sizeType {
-  height: number;
-  width: number;
-}
-const racePlot = (
-  data: dataType,
-  size: sizeType,
-  margin: marginType,
-  collapsed: boolean
-) => {
-  const tooltipAlignmentx = (x, tooltipBox) => {
+"use strict";
+var racePlot = function (data, size, margin, collapsed) {
+  var tooltipAlignmentx = function (x, tooltipBox) {
     if (collapsed) {
       return size.width / 2;
     }
@@ -34,8 +11,7 @@ const racePlot = (
       ) + "px"
     );
   };
-
-  const tooltipAlignmenty = (y, tooltipBox) => {
+  var tooltipAlignmenty = function (y, tooltipBox) {
     if (collapsed) {
       return y + 10 + "px";
     }
@@ -44,23 +20,21 @@ const racePlot = (
     }
     return Math.max(60, y + 10) + "px";
   };
-  const container = d3
+  var container = d3
     .select("#race")
     .style("font-family", "Helvetica Neue, Helvetica, Arial, sans-serif");
   container
     .append("h2")
     .text("Isla Vista Crimes by Race")
     .style("margin", "10px 10px 0 10px");
-
-  const plotArea = container
+  var plotArea = container
     .append("div")
     .style("display", "flex")
     .style("flex-direction", "column")
     .style("align-items", "center")
     .style("width", size.width + "px");
-
-  const svg = plotArea.append("svg");
-  const legendarea = plotArea
+  var svg = plotArea.append("svg");
+  var legendarea = plotArea
     .append("div")
     .style("display", "flex")
     .style("justify-content", "space-evenly")
@@ -69,25 +43,20 @@ const racePlot = (
     .style("min-height", "20px")
     .style("margin-left", margin.left - margin.right + "px")
     .style("width", size.width - margin.left - margin.right + "px");
-
   legendarea.attr("height", 20).attr("width", size.width);
   svg.attr("height", size.height).attr("width", size.width);
-
-  const y = d3
+  var y = d3
     .scaleLinear()
     .domain([0, 6])
     .range([size.height - margin.bottom, margin.top]);
-
-  const x = d3
+  var x = d3
     .scaleLinear()
     .domain([0, 4000])
     // .domain([0, 0.7])
     .range([margin.left, size.width - margin.right]);
-
-  const bars = svg.append("g");
-  const lab = svg.append("g");
+  var bars = svg.append("g");
+  var lab = svg.append("g");
   //   const overlap = svg.append("g");
-
   svg
     .append("text")
     .text("# of Crimes")
@@ -95,7 +64,6 @@ const racePlot = (
     .attr("y", 15)
     // .style("font-size", "16px")
     .attr("fill", "#adadad");
-
   svg
     .append("g")
     .style("font-size", "16px")
@@ -105,8 +73,7 @@ const racePlot = (
       d3.axisTop(x).ticks(5)
       // .tickFormat((d) => `${Math.round((d as number) * 100)}`)
     );
-
-  ["Over Represented", "Under Represented"].forEach((lab, i) => {
+  ["Over Represented", "Under Represented"].forEach(function (lab, i) {
     legendarea
       .append("p")
       .text(lab)
@@ -116,7 +83,7 @@ const racePlot = (
       .style("background-color", ["#AFDBF4", "#d3d3d399"][i])
       .attr("alignment-baseline", "middle");
   });
-  const tooltip = plotArea
+  var tooltip = plotArea
     .append("div")
     .style("position", "absolute")
     .append("div")
@@ -127,14 +94,13 @@ const racePlot = (
     .style("padding", "5px")
     .style("width", "175px")
     .style("display", "none");
-
-  plotArea.on("mouseenter touchstart", () => {
-    plotArea.on("mousemove touchstart", (event) => {
+  plotArea.on("mouseenter touchstart", function () {
+    plotArea.on("mousemove touchstart", function (event) {
       tooltip.style("display", "block");
-
       //   tooltip.html(interactions[0].race);
-      const [xpos, ypos] = d3.pointer(event);
-
+      var _a = d3.pointer(event),
+        xpos = _a[0],
+        ypos = _a[1];
       if (
         ypos < margin.top + 10 ||
         ypos > size.height - 10 ||
@@ -144,31 +110,28 @@ const racePlot = (
         tooltip.style("display", "none");
         return;
       }
-
-      const idx = Math.min(Math.max(Math.floor(y.invert(ypos)), 0), 5);
-      const [group, tooltipData] = Object.entries(data)[idx] as [
-        string,
-        Array<dataType>
-      ];
-
+      var idx = Math.min(Math.max(Math.floor(y.invert(ypos)), 0), 5);
+      var _b = Object.entries(data)[idx],
+        group = _b[0],
+        tooltipData = _b[1];
       tooltip.html(
-        `${group}<hr># of Crimes: ${d3.format(",")(tooltipData.tot)}` +
+        group +
+          "<hr># of Crimes: " +
+          d3.format(",")(tooltipData.tot) +
           (tooltipData.exp > -1 && group !== "Other"
-            ? `<br> Expected: ${d3.format(",")(Math.round(tooltipData.exp))}`
+            ? "<br> Expected: " + d3.format(",")(Math.round(tooltipData.exp))
             : "")
       );
-
-      const tooltipBox = tooltip.node().getBoundingClientRect();
+      var tooltipBox = tooltip.node().getBoundingClientRect();
       tooltip
         .style("left", tooltipAlignmentx(xpos, tooltipBox))
         .style("top", tooltipAlignmenty(ypos, tooltipBox));
     });
-    plotArea.on("mouseleave touchend", () => {
+    plotArea.on("mouseleave touchend", function () {
       tooltip.style("display", "none");
     });
   });
-
-  Object.entries(data).forEach(([group, { pct, exp }], i) => {
+  Object.entries(data).forEach(function (_a, i) {
     // console.log({
     //   group,
     //   currPct,
@@ -176,7 +139,10 @@ const racePlot = (
     //   a1: x(currPct),
     //   a2: x(int.val),
     // });
-
+    var group = _a[0],
+      _b = _a[1],
+      pct = _b.pct,
+      exp = _b.exp;
     // console.log(group);
     bars
       .append("rect")
@@ -185,7 +151,6 @@ const racePlot = (
       .attr("height", collapsed ? 20 : 30)
       .attr("width", x(pct) - margin.left)
       .attr("fill", exp < pct && group !== "Unknown" ? "#AFDBF4" : "#d3d3d399");
-
     if (collapsed) {
       bars
         .append("text")
@@ -204,7 +169,6 @@ const racePlot = (
         .style("font-size", "13pt")
         .attr("alignment-baseline", "middle");
     }
-
     if (exp !== undefined && exp !== "0" && pct > 0.01) {
       bars
         .append("line")
@@ -213,7 +177,6 @@ const racePlot = (
         .attr("y1", y(i))
         .attr("y2", y(i) - (collapsed ? 20 : 30))
         .attr("stroke", "black");
-
       bars
         .append("line")
         .attr("y1", y(i) - (collapsed ? 10 : 15))
@@ -222,7 +185,6 @@ const racePlot = (
         .attr("x2", x(exp))
         .attr("stroke", "black");
     }
-
     // overlap
     //   .append("rect")
     //   .attr("y", y(j) - 30)
@@ -244,7 +206,6 @@ const racePlot = (
     .append("path")
     .attr("d", "M 6 3 0 6 0 0")
     .attr("fill", "black");
-
   bars
     .append("text")
     .text("Expected #")
@@ -253,7 +214,6 @@ const racePlot = (
     .attr("font-size", "18px")
     .attr("text-anchor", "start")
     .attr("alignment-baseline", "middle");
-
   bars
     .append("text")
     .text("from population.")
@@ -262,20 +222,27 @@ const racePlot = (
     .attr("font-size", "18px")
     .attr("text-anchor", "start")
     .attr("alignment-baseline", "middle");
-
   bars
     .append("path")
     .attr(
       "d",
-      `M ${x(2000)} ${y(3.3)} Q ${x(1700)} ${y(3)}, ${
-        x(Object.values(data)[4].exp) + 6
-      } ${y(4) + 10}`
+      "M " +
+        x(2000) +
+        " " +
+        y(3.3) +
+        " Q " +
+        x(1700) +
+        " " +
+        y(3) +
+        ", " +
+        (x(Object.values(data)[4].exp) + 6) +
+        " " +
+        (y(4) + 10)
     )
     .attr("marker-end", "url(#triangle)")
     .attr("fill", "none")
     .attr("stroke", "black")
     .attr("stroke-width", "2px");
-
   container
     .append("p")
     .style("font-family", "Helvetica Neue, Helvetica, Arial, sans-serif")
@@ -288,41 +255,42 @@ const racePlot = (
     )
     .style("margin", "0 10px");
 };
-
-const groupIRData = (data: Array<irDataType>) => {
-  const output: { [a: string]: [irDataType] } = {};
-
-  data.forEach((dat) => {
+var groupIRData = function (data) {
+  var output = {};
+  data.forEach(function (dat) {
     if (Object.keys(output).includes(dat.race)) {
       output[dat.race].push(dat);
     } else {
       output[dat.race] = [dat];
     }
   });
-
-  Object.entries(output).forEach(([group, inters]) => {
-    const sum = output[group].map((d) => Number(d.val)).reduce((a, b) => a + b);
-    inters.forEach((i) => {
+  Object.entries(output).forEach(function (_a) {
+    var group = _a[0],
+      inters = _a[1];
+    var sum = output[group]
+      .map(function (d) {
+        return Number(d.val);
+      })
+      .reduce(function (a, b) {
+        return a + b;
+      });
+    inters.forEach(function (i) {
       i.amt = i.val;
       i.tot = sum;
       i.val = Number(i.val) / sum;
     });
   });
-  const outputReversed = {};
-
+  var outputReversed = {};
   Object.keys(output)
     .reverse()
-    .forEach((key) => {
+    .forEach(function (key) {
       outputReversed[key] = output[key];
     });
-
   return outputReversed;
 };
-
-const groupArrTypeData = (data: arrTypeDataType) => {
-  const output = {};
-
-  data.forEach((dat) => {
+var groupArrTypeData = function (data) {
+  var output = {};
+  data.forEach(function (dat) {
     if (Object.keys(output).includes(dat.group)) {
       output[dat.group].push({
         desc: dat.desc,
@@ -341,32 +309,44 @@ const groupArrTypeData = (data: arrTypeDataType) => {
       ];
     }
   });
-
-  const order = Object.entries(output)
-    .map(([group, arr]) => {
-      return [group, arr.reduce((a, { pct }) => a + pct, 0)];
+  var order = Object.entries(output)
+    .map(function (_a) {
+      var group = _a[0],
+        arr = _a[1];
+      return [
+        group,
+        arr.reduce(function (a, _a) {
+          var pct = _a.pct;
+          return a + pct;
+        }, 0),
+      ];
     })
-    .sort(([_, a], [__, b]) => a - b)
-    .map(([g, _]) => g);
-
-  const outputOrdered = {};
-
-  order.forEach((group) => {
+    .sort(function (_a, _b) {
+      var _ = _a[0],
+        a = _a[1];
+      var __ = _b[0],
+        b = _b[1];
+      return a - b;
+    })
+    .map(function (_a) {
+      var g = _a[0],
+        _ = _a[1];
+      return g;
+    });
+  var outputOrdered = {};
+  order.forEach(function (group) {
     outputOrdered[group] = output[group];
   });
-
   return outputOrdered;
 };
-
-(() => {
-  let raceData = null;
-  const resizeRacePlot = () => {
-    const size = {
+(function () {
+  var raceData = null;
+  var resizeRacePlot = function () {
+    var size = {
       height: 300,
       width: Math.max(Math.min(600, window.innerWidth), 250),
     };
-
-    const margin: marginType = {
+    var margin = {
       left: 25 + (window.innerWidth < 600 ? 0 : 160),
       right: 30,
       top: 40,
@@ -376,19 +356,22 @@ const groupArrTypeData = (data: arrTypeDataType) => {
       .style("width", size.width + "px")
       .selectAll("*")
       .remove();
-
     racePlot(raceData, size, margin, window.innerWidth < 600);
   };
-  window.addEventListener("resize", () => {
+  window.addEventListener("resize", function () {
     resizeRacePlot();
   });
   d3.csv(
     "dist/data/race.csv"
     // "https://raw.githubusercontent.com/dailynexusdata/crime-report/main/dist/data/race.csv"
-  ).then((dat) => {
-    const data = {};
-    dat.forEach(({ race, tot, pct, exp }) => {
-      data[race] = { tot, pct, exp };
+  ).then(function (dat) {
+    var data = {};
+    dat.forEach(function (_a) {
+      var race = _a.race,
+        tot = _a.tot,
+        pct = _a.pct,
+        exp = _a.exp;
+      data[race] = { tot: tot, pct: pct, exp: exp };
     });
     raceData = data;
     resizeRacePlot();
