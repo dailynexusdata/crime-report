@@ -5,17 +5,100 @@
         <meta charset='UTF-8'>
         <meta http-equiv='X-UA-Compatible' content='IE=edge'>
         <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-        <link rel='stylesheet' href='./dist/styles.css'>
-        <script src='./dist/bundle.js' defer></script>
         <title>IVFP Crime Data Report</title>
     </head>
 
     <body style='width: 100%; display: flex; justify-content: center; margin: 0;'>
-        <main style='display: flex; width: 888px; flex-direction: column; align-items:center'>
-            <div id="arrtype"></div>
-            <div id="race"></div>
-            <div id="interaction_by_race"></div>
-            <div id="age"></div>
+        <main style='width: 888px'>
+            <style>
+                @media (max-width: 600px) {
+                    #crimeIframe {
+                        height: 559px;
+                    }
+                }
+
+                @media (max-width: 553px) {
+                    #crimeIframe {
+                        height: 587px;
+                    }
+                }
+
+                @media (max-width: 498px) {
+                    #crimeIframe {
+                        height: 605px;
+                    }
+                }
+
+                @media (max-width: 497px) {
+                    #crimeIframe {
+                        height: 623px;
+                    }
+                }
+            </style><iframe id="crimeIframe" src="https://dailynexusdata.github.io/crime-report/crimes.html#arrtype"
+                height="379px" width="100%" style="border: none; overflow: hidden;" scrolling="no"
+                frameborder="0"></iframe>
+            <hr />
+            <style>
+                @media (max-width: 559px) {
+                    #raceIframe {
+                        height: 479px;
+                    }
+                }
+
+                @media (max-width: 514px) {
+                    #raceIframe {
+                        height: 497px;
+                    }
+                }
+
+                @media (max-width: 495px) {
+                    #raceIframe {
+                        height: 515px;
+                    }
+                }
+
+                @media (max-width: 368px) {
+                    #raceIframe {
+                        height: 545px;
+                    }
+                }
+            </style><iframe id="raceIframe" src="https://dailynexusdata.github.io/crime-report/races.html#races"
+                height="461px" width="100%" style="border: none; overflow: hidden;" scrolling="no"
+                frameborder="0"></iframe>
+            <hr />
+            <style>
+                @media (max-width: 600px) {
+                    #ageIframe {
+                        height: 493px;
+                    }
+                }
+
+                @media (max-width: 495px) {
+                    #ageIframe {
+                        height: 511px;
+                    }
+                }
+
+                @media (max-width: 454px) {
+                    #ageIframe {
+                        height: 533px;
+                    }
+                }
+
+                @media (max-width: 373px) {
+                    #ageIframe {
+                        height: 561px;
+                    }
+                }
+
+                @media (max-width: 305px) {
+                    #ageIframe {
+                        height: 583px;
+                    }
+                }
+            </style><iframe id="ageIframe" src="https://dailynexusdata.github.io/crime-report/ages.html#age"
+                height="383px" width="100%" style="border: none; overflow: hidden;" scrolling="no"
+                frameborder="0"></iframe>
         </main>
     </body>
 
