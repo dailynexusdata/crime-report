@@ -75,7 +75,7 @@ const ageWide = (data, size, margin) => {
   });
 
   const container = d3
-    .select("#age")
+    .select("#snap-age-d3")
     .style("font-family", "Helvetica Neue, Helvetica, Arial, sans-serif");
   container
     .append("h2")

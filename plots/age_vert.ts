@@ -73,7 +73,7 @@ const ageWide = (data, size, margin) => {
   });
 
   const container = d3
-    .select("#age")
+    .select("#snap-age-d3")
     .style("font-family", "Helvetica Neue, Helvetica, Arial, sans-serif");
   container
     .append("h2")
@@ -409,7 +409,7 @@ const ageVert = (data, size, margin) => {
   });
 
   const container = d3
-    .select("#age")
+    .select("#snap-age-d3")
     .style("font-family", "Helvetica Neue, Helvetica, Arial, sans-serif");
   container
     .append("h2")
@@ -749,12 +749,12 @@ const groupArrTypeData = (data: arrTypeDataType) => {
   return outputOrdered;
 };
 
-(() => {
+export default () => {
   let ageData = null;
   const resizeAgePlot = () => {
     const width = Math.max(Math.min(600, window.innerWidth), 270);
 
-    d3.select("#age")
+    d3.select("#snap-age-d3")
       .style("width", width + "px")
       .selectAll("*")
       .remove();
@@ -797,4 +797,4 @@ const groupArrTypeData = (data: arrTypeDataType) => {
     ageData = data;
     resizeAgePlot();
   });
-})();
+};

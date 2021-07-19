@@ -7,7 +7,7 @@
     "doc": "doc"
   },
   "scripts": {
-    "start": "tsc plots/age_vert.ts",
+    "start": "webpack --watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

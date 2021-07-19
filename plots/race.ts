@@ -45,7 +45,7 @@ const racePlot = (
     return Math.max(60, y + 10) + "px";
   };
   const container = d3
-    .select("#race")
+    .select("#snap-race-d3")
     .style("font-family", "Helvetica Neue, Helvetica, Arial, sans-serif");
   container
     .append("h2")
@@ -358,7 +358,7 @@ const groupArrTypeData = (data: arrTypeDataType) => {
   return outputOrdered;
 };
 
-(() => {
+export default () => {
   let raceData = null;
   const resizeRacePlot = () => {
     const size = {
@@ -372,11 +372,10 @@ const groupArrTypeData = (data: arrTypeDataType) => {
       top: 40,
       bottom: 10,
     };
-    d3.select("#race")
+    d3.select("#snap-race-d3")
       .style("width", size.width + "px")
       .selectAll("*")
       .remove();
-
     racePlot(raceData, size, margin, window.innerWidth < 600);
   };
   window.addEventListener("resize", () => {
@@ -393,4 +392,4 @@ const groupArrTypeData = (data: arrTypeDataType) => {
     raceData = data;
     resizeRacePlot();
   });
-})();
+};

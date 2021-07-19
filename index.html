@@ -5,12 +5,24 @@
         <meta charset='UTF-8'>
         <meta http-equiv='X-UA-Compatible' content='IE=edge'>
         <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+        <script src="dist/bundle.js" defer></script>
         <title>IVFP Crime Data Report</title>
     </head>
 
     <body style='width: 100%; display: flex; justify-content: center; margin: 0;'>
-        <main style='width: 888px'>
-            <style>
+        <main style='width: 888px;'>
+            <div style="display: flex; justify-content: center;">
+                <div id="snap-arrtype-d3"></div>
+            </div>
+            <hr />
+            <div style="display: flex; justify-content: center;">
+                <div id="snap-race-d3"></div>
+            </div>
+            <hr />
+            <div style="display: flex; justify-content: center;">
+                <div id="snap-age-d3"></div>
+            </div>
+            <!-- <style>
                 @media (max-width: 600px) {
                     #crimeIframe {
                         height: 585px;
@@ -98,7 +110,7 @@
                 }
             </style><iframe id="ageIframe" src="https://dailynexusdata.github.io/crime-report/ages.html#age"
                 height="395px" width="100%" style="border: none; overflow: hidden;" scrolling="no"
-                frameborder="0"></iframe>
+                frameborder="0"></iframe> -->
         </main>
     </body>
 

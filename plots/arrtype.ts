@@ -48,7 +48,7 @@ const arrestType = (
     return Math.max(0, y + 10) + "px";
   };
   const container = d3
-    .select("#arrtype")
+    .select("#snap-arrtype-d3")
     .style("font-family", "Helvetica Neue, Helvetica, Arial, sans-serif");
   container
     .append("h2")
@@ -399,9 +399,8 @@ const groupArrTypeData = (data: arrTypeDataType) => {
   return outputOrdered;
 };
 
-let arrData = null;
-
-(() => {
+export default () => {
+  let arrData = null;
   const resizeArrType = () => {
     const size = {
       height: 300 * (window.innerWidth < 600 ? 1.6 : 1),
@@ -414,7 +413,7 @@ let arrData = null;
       top: 68,
       bottom: 10 + (window.innerWidth < 600 ? 20 : 0),
     };
-    d3.select("#arrtype")
+    d3.select("#snap-arrtype-d3")
       .style("width", size.width + "px")
       .selectAll("*")
       .remove();
@@ -432,4 +431,4 @@ let arrData = null;
     arrData = groupArrTypeData(data as any);
     resizeArrType();
   });
-})();
+};
