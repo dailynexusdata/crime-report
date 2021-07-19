@@ -1,28 +1,6 @@
 import * as d3 from "d3";
 
-interface dataType {
-  race: string;
-  val: number;
-  inv: string;
-  tot: number;
-  amt: number;
-}
-interface marginType {
-  left: number;
-  right: number;
-  top: number;
-  bottom: number;
-}
-interface sizeType {
-  height: number;
-  width: number;
-}
-const racePlot = (
-  data: dataType,
-  size: sizeType,
-  margin: marginType,
-  collapsed: boolean
-) => {
+const racePlot = (data, size, margin, collapsed) => {
   const tooltipAlignmentx = (x, tooltipBox) => {
     if (collapsed) {
       return size.width / 2;
@@ -146,10 +124,7 @@ const racePlot = (
       }
 
       const idx = Math.min(Math.max(Math.floor(y.invert(ypos)), 0), 5);
-      const [group, tooltipData] = Object.entries(data)[idx] as [
-        string,
-        Array<dataType>
-      ];
+      const [group, tooltipData] = Object.entries(data)[idx];
 
       tooltip.html(
         `${group}<hr># of Crimes: ${d3.format(",")(tooltipData.tot)}` +
@@ -289,8 +264,8 @@ const racePlot = (
     .style("margin", "0 10px");
 };
 
-const groupIRData = (data: Array<irDataType>) => {
-  const output: { [a: string]: [irDataType] } = {};
+const groupIRData = (data) => {
+  const output = {};
 
   data.forEach((dat) => {
     if (Object.keys(output).includes(dat.race)) {
@@ -319,7 +294,7 @@ const groupIRData = (data: Array<irDataType>) => {
   return outputReversed;
 };
 
-const groupArrTypeData = (data: arrTypeDataType) => {
+const groupArrTypeData = (data) => {
   const output = {};
 
   data.forEach((dat) => {
@@ -366,7 +341,7 @@ export default () => {
       width: Math.max(Math.min(600, window.innerWidth), 250),
     };
 
-    const margin: marginType = {
+    const margin = {
       left: 25 + (window.innerWidth < 600 ? 0 : 160),
       right: 30,
       top: 40,

@@ -8,13 +8,12 @@
   },
   "scripts": {
     "start": "webpack --watch",
+    "build": "webpack",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@types/d3": "^6.7.0",
-    "@types/node": "^15.12.2",
     "d3": "^7.0.0",
     "d3-axis": "^3.0.0",
     "ts-loader": "^9.2.3",
@@ -22,6 +21,7 @@
     "webpack-cli": "^4.7.2"
   },
   "dependencies": {
+    "path": "^0.12.7",
     "webpack": "^5.38.1"
   }
 }

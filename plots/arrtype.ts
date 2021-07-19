@@ -1,31 +1,7 @@
 import * as d3 from "d3";
 import { toNamespacedPath } from "path/posix";
 
-interface dataType {
-  [group: string]: Array<{
-    desc: string;
-    n: number;
-    viol: 0 | 1;
-    pct: number;
-  }>;
-}
-interface marginType {
-  left: number;
-  right: number;
-  top: number;
-  bottom: number;
-}
-interface sizeType {
-  height: number;
-  width: number;
-}
-
-const arrestType = (
-  data: dataType,
-  size: sizeType,
-  margin: marginType,
-  collapsed: boolean
-) => {
+const arrestType = (data, size, margin, collapsed) => {
   const tooltipAlignmentx = (x, tooltipBox) => {
     if (collapsed) {
       return size.width / 2;
@@ -111,7 +87,7 @@ const arrestType = (
       d3
         .axisTop(x)
         .ticks(5)
-        .tickFormat((d) => `${Math.round((d as number) * 100)}`)
+        .tickFormat((d) => `${Math.round(d * 100)}`)
     );
 
   //   ["Arrests", "Citations", "Did Not File Charges"].forEach((lab, i) => {
@@ -330,8 +306,8 @@ const arrestType = (
     .style("margin", "0 10px");
 };
 
-const groupIRData = (data: Array<irDataType>) => {
-  const output: { [a: string]: [irDataType] } = {};
+const groupIRData = (data) => {
+  const output = {};
 
   data.forEach((dat) => {
     if (Object.keys(output).includes(dat.race)) {
@@ -360,7 +336,7 @@ const groupIRData = (data: Array<irDataType>) => {
   return outputReversed;
 };
 
-const groupArrTypeData = (data: arrTypeDataType) => {
+const groupArrTypeData = (data) => {
   const output = {};
 
   data.forEach((dat) => {
@@ -407,7 +383,7 @@ export default () => {
       width: Math.max(Math.min(600, window.innerWidth), 270),
     };
 
-    const margin: marginType = {
+    const margin = {
       left: 20 + (window.innerWidth < 600 ? 0 : 160),
       right: 20,
       top: 68,
@@ -428,7 +404,7 @@ export default () => {
   d3.csv(
     "https://raw.githubusercontent.com/dailynexusdata/crime-report/main/dist/data/arrType.csv"
   ).then((data) => {
-    arrData = groupArrTypeData(data as any);
+    arrData = groupArrTypeData(data);
     resizeArrType();
   });
 };

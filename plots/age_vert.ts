@@ -1,21 +1,5 @@
 import * as d3 from "d3";
 
-interface arrTypeDataType {
-  group: string;
-  desc: string;
-  n: number;
-  viol: 0 | 1;
-}
-interface marginType {
-  left: number;
-  right: number;
-  top: number;
-  bottom: number;
-}
-interface sizeType {
-  height: number;
-  width: number;
-}
 const groupByAge = (data) => {
   const output = {};
 
@@ -122,7 +106,7 @@ const ageWide = (data, size, margin) => {
       d3
         .axisTop(x1)
         .ticks(5)
-        .tickFormat((d) => `${Math.round((d as number) * 100)}`)
+        .tickFormat((d) => `${Math.round(d * 100)}`)
     );
   svgBars
     .append("g")
@@ -710,7 +694,7 @@ const ageVert = (data, size, margin) => {
     )
     .style("margin", "0 10px");
 };
-const groupArrTypeData = (data: arrTypeDataType) => {
+const groupArrTypeData = (data) => {
   const output = {};
 
   data.forEach((dat) => {
@@ -764,7 +748,7 @@ export default () => {
         height2: 320,
         width: width,
       };
-      const margin: marginType = {
+      const margin = {
         left: 60,
         right: 30,
         top: 35,
@@ -777,7 +761,7 @@ export default () => {
         width1: width * 0.8,
         width2: width * 0.2,
       };
-      const margin: marginType = {
+      const margin = {
         left: 55,
         right: 15,
         top: 40,
