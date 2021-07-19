@@ -1,5 +1,4 @@
 import * as d3 from "d3";
-import { toNamespacedPath } from "path/posix";
 
 const arrestType = (data, size, margin, collapsed) => {
   const tooltipAlignmentx = (x, tooltipBox) => {
